@@ -69,6 +69,7 @@ class BasicCalls {
                     guard let actualToken = res["token"] as? String else {return}
                     
                     guard let loggingIn = res["loggingIn"] as? String else {return}
+                    print(loggingIn)
                     
                     completion(actualToken, loggingIn)
                    } catch let parsingError {

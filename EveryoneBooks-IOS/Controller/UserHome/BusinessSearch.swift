@@ -10,7 +10,9 @@ import UIKit
 
 class BusinessSearch: UIViewController {
     
-    var businesses: [[String: Any]]?
+    var businesses: [Business]?
+    
+    var employeeSearchingForBusiness: Bool?
             
 
     private let businessNameTextField: UITextField = {
@@ -64,32 +66,73 @@ class BusinessSearch: UIViewController {
         return bp;
     }()
     
+    private let backButton: UIButton = {
+        let uib = Components().createBackButton();
+        uib.addTarget(self, action: #selector(goBack), for: .touchUpInside)
+        return uib;
+    }()
+    
+    @objc func goBack() {
+        navigationController?.popViewController(animated: true);
+    }
    
     
     @objc func searchBusinesses() {
         if bp.selected != "" || businessNameTextField.text! != "" || cityTextField.text! != "" ||  stateTextField.text! != "" || zipTextField.text! != "" {
             let data = ["typeOfBusiness": bp.selected, "businessName": businessNameTextField.text!, "city": cityTextField.text!, "state": stateTextField.text!, "zip": zipTextField.text!];
             API().post(url: "http://localhost:4000/api/businessList/businessSearch", headerToSend: Utilities().getToken(), dataToSend: data, completion: { (res) in
-                self.businesses = res["businessesBack"] as? [[String: Any]];
-                DispatchQueue.main.async {
-                let businessCollectionView = BusinessSearchCollection(collectionViewLayout:UICollectionViewFlowLayout());
-                businessCollectionView.businesses = self.businesses;
-                let navController = UINavigationController(rootViewController: businessCollectionView);
-                    navController.modalPresentationStyle = .fullScreen;
-                    self.present(navController, animated: true, completion: nil)
+                print(res)
+                guard let newBusinesses = res["businessesBack"] as? [[String: Any]] else {print("no businesses"); return}
+                var businessesArray: [Business] = [];
+                for newBusiness in newBusinesses {
+                     let businessToAdd = Business(dic: newBusiness);
+                     businessesArray.append(businessToAdd)
                 }
-             })
-           }
+                self.businesses = businessesArray;
+                if let esfb = self.employeeSearchingForBusiness {
+                    if esfb {
+                        DispatchQueue.main.async {
+                            let businessCollectionView = EmployeeBusinessSearchCollection(collectionViewLayout:UICollectionViewFlowLayout());
+                            businessCollectionView.businesses = self.businesses;
+                            let navController = UINavigationController(rootViewController: businessCollectionView);
+                            navController.modalPresentationStyle = .fullScreen;
+                            self.present(navController, animated: true, completion: nil)
+                        }
+                    }
+                }
+                else {
+                    DispatchQueue.main.async {
+                        let businessCollectionView = BusinessSearchCollection(collectionViewLayout:UICollectionViewFlowLayout());
+                        businessCollectionView.businesses = self.businesses;
+                        let navController = UINavigationController(rootViewController: businessCollectionView);
+                        navController.modalPresentationStyle = .fullScreen;
+                        self.present(navController, animated: true, completion: nil)
+                    }
+                }
+                
+            })
         }
-        
+    }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.title = "Business Search";
+        view.backgroundColor = .literGray;
         configureUI()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated);
+        if let esfb = self.employeeSearchingForBusiness {
+            if esfb {
+                backButton.isHidden = false;
+            }
+        }
+    }
+    
     func configureUI() {
+        backButton.isHidden = true;
         navigationController?.navigationBar.barTintColor = .mainLav;
         view.addSubview(businessNameInput);
         businessNameInput.padTop(from: view.safeAreaLayoutGuide.topAnchor, num: 10);
@@ -112,8 +155,9 @@ class BusinessSearch: UIViewController {
         searchButton.setHeight(height: 48);
         searchButton.setWidth(width: 200);
         searchButton.centerTo(element: view.centerXAnchor);
-        searchButton.padTop(from: bp.bottomAnchor, num: 140);
+        searchButton.padTop(from: bp.bottomAnchor, num: 40);
+        view.addSubview(backButton);
+        backButton.padBottom(from: view.safeAreaLayoutGuide.bottomAnchor, num: 20);
+        backButton.padLeft(from: view.leftAnchor, num: 20);
     }
 }
-
-

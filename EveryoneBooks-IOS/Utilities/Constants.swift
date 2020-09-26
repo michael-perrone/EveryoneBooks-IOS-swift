@@ -7,6 +7,10 @@
 //
 
 import Foundation
+import UIKit
 
 let myURL = "http://localhost:4000/api/";
 
+let fullWidth = UIScreen.main.bounds.width;
+
+let fullHeight = UIScreen.main.bounds.height;

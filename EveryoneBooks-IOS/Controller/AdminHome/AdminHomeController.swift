@@ -9,30 +9,16 @@
 import UIKit
 
 class AdminHomeController: UITabBarController {
-    
-    var schedule: Schedule? {
-        didSet {
-            guard let adminHome = viewControllers?[0] as? UINavigationController else {return}
-            
-          
-            guard let adminBookings = adminHome.viewControllers[0] as? AdminBookings else {return}
-            adminBookings.schedule = schedule;
-        }
-    }
-    
-    var business: Business? {
-        didSet {
-            guard let adminHome = viewControllers?[0] as? UINavigationController else {return}
-            guard let adminBookings = adminHome.viewControllers[0] as? AdminBookings else {return}
-            adminBookings.business = business;
-        }
-    }
 
-    private let logoutButton: UIButton = {
-        let uib = Components().createNormalButton(title: "Logout");
-        uib.addTarget(self, action: #selector(logout), for: .touchUpInside)
+    private let menuButton: UIButton = {
+        let uib = Components().createMenuButton();
+        uib.addTarget(self, action: #selector(logout), for: .touchUpInside);
+        uib.setHeight(height: 30);
+        uib.setWidth(width: 60)
         return uib;
-    }()
+    }();
+    
+    
        
     @objc func logout() {
         Utilities().logout(key: "adminToken");
@@ -49,39 +35,30 @@ class AdminHomeController: UITabBarController {
         configureTabs()
         configureUI()
         getBusiness()
-        // Do any additional setup after loading the view.
     }
     
     func configureTabs() {
-        let notifications = Components().createNavBarItemController(image: UIImage(named: "notis"), viewController: AdminNotifications(), title: "Notifications")
-        let businessHome = Components().createNavBarItemController(image: UIImage(named: "business-tab-bar"), viewController: AdminBookings(), title: "Home")
-        let schedule = Components().createNavBarItemController(image: UIImage(named: "calendar"), viewController: AdminShifts(), title: "Shifts")
+        let notifications = Components().createNavBarItemController(image: UIImage(named: "notis"), viewController: AdminNotifications(collectionViewLayout: UICollectionViewFlowLayout()), title: "Notifications")
+        let businessHome = Components().createNavBarItemController(image: UIImage(named: "business-tab-bar"), viewController: AdminBookings(), title: "Service Schedule")
+        let schedule = Components().createNavBarItemController(image: UIImage(named: "calendar"), viewController: AdminShifts(), title: "Shift Schedule")
         viewControllers = [businessHome, schedule, notifications];
     }
     
     func configureUI() {
         view.backgroundColor = .mainLav;
-        view.addSubview(logoutButton);
-        logoutButton.centerTo(element: view.centerXAnchor);
-        logoutButton.padTop(from: view.safeAreaLayoutGuide.topAnchor, num: 70);
+        view.addSubview(menuButton);
+        menuButton.padLeft(from: view.leftAnchor, num: 20);
+        menuButton.padTop(from: view.safeAreaLayoutGuide.topAnchor, num: 10);
     }
     
     func getBusiness() {
         let url = myURL + "businessProfile/myBusinessForProfile";
-        
         API().get(url: url, headerToSend: Utilities().getAdminToken()) { (res) in
             if let profileCreated = res["profileCreated"] as? Bool {
                 if (profileCreated) {
-                    DispatchQueue.main.async {
-                        if let business = res["business"] as? [String: Any] {
-                            if let schedule = business["schedule"] as? [[String: String]] {
-                                self.schedule = Schedule(dic: schedule)
-                            }
-                        }
-                    }
+                    print("DEBUGY   : for now all good")
                 }
                 else {
-                    
                     DispatchQueue.main.async {
                         let editBusiness = EditBusinessProfile();
                         editBusiness.message = "Bitch What";

@@ -14,14 +14,22 @@ class TimeDrop: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSource {
     var selected = "Closed";
     var openClose = "";
     
-    var timesData = [ "Closed", "12:00 AM", "12:30 AM", "1:00 AM", "1:30 AM", "2:00 AM", "2:30 AM", "3:00 AM", "3:30 AM", "4:00 AM", "4:30 AM", "5:00 AM", "5:30 AM", "6:00 AM", "6:30 AM", "7:00 AM", "7:30 AM", "8:00 AM", "8:30 AM", "9:00 AM", "9:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM", "3:00 PM", "3:30 PM", "4:00 PM", "4:30 PM", "5:00 PM", "5:30 PM", "6:00 PM", "6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM", "8:30 PM", "9:00 PM", "9:30 PM", "10:00 PM", "10:30 PM", "11:00 PM", "11:30 PM"]
+    var timesData = ["12:00 AM", "12:30 AM", "1:00 AM", "1:30 AM", "2:00 AM", "2:30 AM", "3:00 AM", "3:30 AM", "4:00 AM", "4:30 AM", "5:00 AM", "5:30 AM", "6:00 AM", "6:30 AM", "7:00 AM", "7:30 AM", "8:00 AM", "8:30 AM", "9:00 AM", "9:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM", "3:00 PM", "3:30 PM", "4:00 PM", "4:30 PM", "5:00 PM", "5:30 PM", "6:00 PM", "6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM", "8:30 PM", "9:00 PM", "9:30 PM", "10:00 PM", "10:30 PM", "11:00 PM", "11:30 PM"]
     
-    init(openClose: String) {
-        self.openClose = openClose;
-        super.init(frame: CGRect());
-        timesData.insert(openClose, at: 0)
-        self.delegate = self;
-        self.dataSource = self;
+    init(openClose: String?) {
+        if let openCloseUnwrapped = openClose {
+            self.openClose = openCloseUnwrapped;
+            super.init(frame: CGRect());
+            timesData.insert("Closed", at: 0)
+            timesData.insert(openCloseUnwrapped, at: 1)
+            self.delegate = self;
+            self.dataSource = self;
+        }
+        else {
+            super.init(frame: CGRect());
+            self.delegate = self;
+            self.dataSource = self;
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -50,7 +58,4 @@ class TimeDrop: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSource {
         let myTitle = NSAttributedString(string: titleData, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12)]);
         return myTitle
     }
-
- 
-
 }

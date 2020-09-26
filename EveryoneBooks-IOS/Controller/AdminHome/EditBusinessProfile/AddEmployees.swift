@@ -21,23 +21,23 @@ class AddEmployees: UIViewController {
         }
     }
     
-    var employeesHere: [[String: String]]? {
+    var employeesHere: [Employee] = [] {
         didSet {
+            self.employeesHereTable.employees = self.employeesHere;
+            self.employeesHereTable.url = "http://localhost:4000/api/businessProfile/employeeDeleteFromBusiness";
             DispatchQueue.main.async {
-                self.employeesHereTable.employees = self.employeesHere;
                 self.employeesHereTable.table.reloadData()
-                self.employeesHereTable.url = "http://localhost:4000/api/businessProfile/employeeDeleteFromBusiness";
             }
         }
     }
     
-    var employeesPending: [[String:String]]? {
+    var employeesPending: [Employee] = [] {
         didSet {
+            print(self.employeesPending)
+           self.employeesPendingTable.employees = self.employeesPending;
+            self.employeesPendingTable.url = "http://localhost:4000/api/businessProfile/removeFromPending";
             DispatchQueue.main.async {
-                self.employeesPendingTable.employees = self.employeesPending;
                 self.employeesPendingTable.table.reloadData();
-                self.employeesPendingTable.url = "http://localhost:4000/api/businessProfile/removeFromPending";
-                
             }
         }
     }
@@ -97,6 +97,7 @@ class AddEmployees: UIViewController {
     
     private let success: UIView = {
         let uiv = Components().createSuccess(text: "Employee Succesfully Added");
+        uiv.backgroundColor = .mainLav;
         return uiv;
     }();
     
@@ -171,8 +172,14 @@ class AddEmployees: UIViewController {
         let dataToSend = ["employeeId": self.employeeId, "business": Utilities().getBusinessId()];
         let url = myURL + "businessProfile/addEmployeeToBusinessApp";
         API().post(url: url, dataToSend: dataToSend) { (res) in
+            print("oh me!")
             if res["statusCode"] as! Int != 406 {
-                self.employeesPending?.append(["fullName": self.employeeName, "_id": self.employeeId!])
+                print("oh my!")
+                let newEmployee = Employee(dic: ["fullName": self.employeeName, "_id": self.employeeId!]);
+                print(newEmployee)
+                self.employeesPending.append(newEmployee);
+                self.employeesPendingTable.url = "http://localhost:4000/api/businessProfile/removeFromPending";
+                self.employeesPendingTable.employees = self.employeesPending;
                 DispatchQueue.main.async {
                    self.employeeFound.isHidden = true;
                    self.success.isHidden = false;
@@ -290,10 +297,28 @@ class AddEmployees: UIViewController {
     func getEmployees() {
         let url = myURL + "businessProfile/myEmployees";
         API().get(url: url, headerToSend: Utilities().getAdminToken()) { (res) in
-            let employeesHere = res["employeesHere"] as? [[String: String]];
-            let employeesPending = res["employeesPending"] as? [[String: String]];
-            self.employeesHere = employeesHere;
-            self.employeesPending = employeesPending;
+            let employeesWhoWorkHere = res["employeesHere"] as? [[String: String]];
+            var employeesWhoWorkHereArray: [Employee] = [];
+            if let employeesWhoWorkHere = employeesWhoWorkHere {
+                for employeeWhoWorksHere in employeesWhoWorkHere {
+                    let employee = Employee(dic: employeeWhoWorksHere)
+                    employeesWhoWorkHereArray.append(employee);
+                }
+                if employeesWhoWorkHereArray.count > 0 {
+                    self.employeesHere = employeesWhoWorkHereArray;
+                }
+            }
+            let employeesPendingHere = res["employeesPending"] as? [[String: String]];
+            var employeesPendingArray: [Employee] = [];
+            if let employeesPending = employeesPendingHere {
+                for employeePendingHere in employeesPending {
+                    let employee = Employee(dic: employeePendingHere)
+                    employeesPendingArray.append(employee);
+                }
+                if employeesPendingArray.count > 0 {
+                    self.employeesPending = employeesPendingArray;
+                }
+            }
         }
     }
 

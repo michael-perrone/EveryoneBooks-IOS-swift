@@ -12,9 +12,18 @@ protocol OtherCollectionViewCellDelegate: BusinessesFollowingCollection {
     func showBusiness(bpId: String)
     
     func removeBusiness(index: Int);
+    
+    func bookAtBusiness(business: Business)
 }
 
 class BusinessesFollowingCollection: UICollectionViewController, OtherCollectionViewCellDelegate  {
+    
+    func bookAtBusiness(business: Business) {
+        let userBookingSomething = UserBookingSomething();
+        userBookingSomething.comingFromBusinessPage = false;
+        userBookingSomething.business = business;
+        navigationController?.pushViewController(userBookingSomething, animated: true);
+    }
     
     func removeBusiness(index: Int) {
         businesses?.remove(at: index)
@@ -29,7 +38,7 @@ class BusinessesFollowingCollection: UICollectionViewController, OtherCollection
         self.present(nav, animated: true, completion: nil);
     }
     
-    var businesses: [[String:Any]]? {
+    var businesses: [Business]? {
         didSet {
             DispatchQueue.main.async {
                 self.collectionView.reloadData()
@@ -43,6 +52,9 @@ class BusinessesFollowingCollection: UICollectionViewController, OtherCollection
         uib.addTarget(self, action: #selector(cancelButton), for: .touchUpInside);
         return uib;
     }()
+    
+  
+    
     
     @objc func cancelButton() {
         self.dismiss(animated: true, completion: nil);
@@ -69,7 +81,12 @@ class BusinessesFollowingCollection: UICollectionViewController, OtherCollection
     func getFollowing() {
             API().get(url: "http://localhost:4000/api/userProfile/followingForTab", headerToSend: Utilities().getToken()) { (res) in
                 guard let businessesFollow = res["businessesFollowing"] as? [[String: Any]] else {return}
-                self.businesses = businessesFollow;
+                var businessesArray: [Business] = [];
+                for businessFollowing in businessesFollow {
+                    let newBusiness = Business(dic: businessFollowing);
+                    businessesArray.append(newBusiness);
+            }
+                self.businesses = businessesArray;
         }
     }
 }
@@ -88,16 +105,15 @@ extension BusinessesFollowingCollection {
 override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "BusinessFollowingCell", for: indexPath) as! BusinessesFollowingCollectionViewCell;
     if let businesses = businesses {
-        cell.webText.text = businesses[indexPath.row]["website"] as? String;
-        cell.phoneText.text = businesses[indexPath.row]["phoneNumber"] as? String;
-        cell.businessName.text = businesses[indexPath.row]["businessName"]! as? String ;
-        cell.streetText.text = businesses[indexPath.row]["address"]! as? String;
-        cell.cityText.text = businesses[indexPath.row]["city"]! as? String ;
-        cell.stateText.text = businesses[indexPath.row]["state"]! as? String ;
-        cell.zipText.text = businesses[indexPath.row]["zip"]! as? String;
-        let scheduleBack = businesses[indexPath.row]["schedule"] as! [[String:String]];
-        cell.schedule = Schedule(dic: scheduleBack);
-        cell.bID = businesses[indexPath.row]["_id"] as! String;
+        cell.webText.text = businesses[indexPath.row].website;
+        cell.phoneText.text = businesses[indexPath.row].phone;
+        cell.businessName.text = businesses[indexPath.row].nameOfBusiness;
+        cell.streetText.text = businesses[indexPath.row].street;
+        cell.cityText.text = businesses[indexPath.row].city;
+        cell.stateText.text = businesses[indexPath.row].state;
+        cell.zipText.text = businesses[indexPath.row].zip;
+        cell.bID = businesses[indexPath.row].id;
+        cell.business = businesses[indexPath.row];
         cell.configureView();
         cell.delegate = self;
         cell.index_ = indexPath.row;

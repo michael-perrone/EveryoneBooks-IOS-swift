@@ -16,60 +16,11 @@ class BusinessPageController: UIViewController {
         }
     }
     
-    var services: [String]? {
+    var services: [Service]? {
         didSet {
             table.services = self.services;
         }
     }
-    
-    var schedule: Schedule? {
-        didSet {
-            DispatchQueue.main.async {
-                if self.schedule!.sunOpen == "Closed" || self.schedule!.sunClose == "Closed" {
-                    self.sunText.text = "Sun: Closed"
-                }
-                else {
-                    self.sunText.text = "Sun: \(self.schedule!.sunOpen)-\(self.schedule!.sunClose)"
-                }
-                if self.schedule!.monOpen == "Closed" || self.schedule!.monClose == "Closed" {
-                    self.monText.text = "Mon: Closed"
-                }
-                else {
-                    self.monText.text = "Mon: \(self.schedule!.monOpen)-\(self.schedule?.monClose ?? "")"
-                }
-                if self.schedule!.tueOpen == "Closed" || self.schedule!.tueClose == "Closed" {
-                    self.tueText.text = "Tue: Closed"
-                }
-                else {
-                    self.tueText.text = "Tue: \(self.schedule!.tueOpen)-\(self.schedule!.tueClose)"
-                }
-                if self.schedule!.wedOpen == "Closed" || self.schedule!.wedClose == "Closed" {
-                    self.wedText.text = "Wed: Closed"
-                }
-                else {
-                    self.wedText.text = "Wed: \(self.schedule!.wedOpen)-\(self.schedule!.wedClose)"
-                }
-                if self.schedule?.thuOpen == "Closed" || self.schedule?.thuClose == "Closed" {
-                    self.thuText.text = "Thu: Closed"
-                }
-                else {
-                    self.thuText.text = "Thu: \(self.schedule!.thuOpen)-\(self.schedule!.thuClose)"
-                }
-                if self.schedule!.friOpen == "Closed" || self.schedule!.friClose == "Closed" {
-                    self.friText.text = "Fri: Closed"
-                }
-                else {
-                    self.friText.text = "Fri: \(self.schedule!.friOpen)-\(self.schedule!.friClose)"
-                }
-                if self.schedule!.satOpen == "Closed" || self.schedule!.satClose == "Closed" {
-                    self.satText.text = "Sat: Closed"
-                }
-                else {
-                    self.satText.text = "Sat: \(self.schedule!.satOpen)-\(self.schedule!.satClose)"
-                }
-            }
-           }
-        }
     
     var business: Business? {
         didSet {
@@ -81,6 +32,48 @@ class BusinessPageController: UIViewController {
                 self.zipText.text = self.business?.zip;
                 self.phoneText.text = self.business?.phone;
                 self.webText.text = self.business?.website;
+                if self.business!.schedule!.sunOpen == "Closed" || self.business!.schedule!.sunClose == "Closed" {
+                    self.sunText.text = "Sun: Closed"
+                }
+                else {
+                    self.sunText.text = "Sun: \(self.business!.schedule!.sunOpen)-\(self.business!.schedule!.sunClose)"
+                }
+                if self.business!.schedule!.monOpen == "Closed" || self.business!.schedule!.monClose == "Closed" {
+                    self.monText.text = "Mon: Closed"
+                }
+                else {
+                    self.monText.text = "Mon: \(self.business!.schedule!.monOpen)-\(self.business!.schedule?.monClose ?? "")"
+                }
+                if self.business!.schedule!.tueOpen == "Closed" || self.business!.schedule!.tueClose == "Closed" {
+                    self.tueText.text = "Tue: Closed"
+                }
+                else {
+                    self.tueText.text = "Tue: \(self.business!.schedule!.tueOpen)-\(self.business!.schedule!.tueClose)"
+                }
+                if self.business!.schedule!.wedOpen == "Closed" || self.business!.schedule!.wedClose == "Closed" {
+                    self.wedText.text = "Wed: Closed"
+                }
+                else {
+                    self.wedText.text = "Wed: \(self.business!.schedule!.wedOpen)-\(self.business!.schedule!.wedClose)"
+                }
+                if self.business!.schedule?.thuOpen == "Closed" || self.business!.schedule?.thuClose == "Closed" {
+                    self.thuText.text = "Thu: Closed"
+                }
+                else {
+                    self.thuText.text = "Thu: \(self.business!.schedule!.thuOpen)-\(self.business!.schedule!.thuClose)"
+                }
+                if self.business!.schedule!.friOpen == "Closed" || self.business!.schedule!.friClose == "Closed" {
+                    self.friText.text = "Fri: Closed"
+                }
+                else {
+                    self.friText.text = "Fri: \(self.business!.schedule!.friOpen)-\(self.business!.schedule!.friClose)"
+                }
+                if self.business!.schedule!.satOpen == "Closed" || self.business!.schedule!.satClose == "Closed" {
+                    self.satText.text = "Sat: Closed"
+                }
+                else {
+                    self.satText.text = "Sat: \(self.business!.schedule!.satOpen)-\(self.business!.schedule!.satClose)"
+                }
             }
         }
     }
@@ -92,7 +85,11 @@ class BusinessPageController: UIViewController {
     }();
     
     @objc func goToBook() {
-       
+        let userBookingSomethingController = UserBookingSomething();
+        userBookingSomethingController.comingFromBusinessPage = true;
+        userBookingSomethingController.services = self.services;
+        userBookingSomethingController.business = self.business;
+        navigationController?.pushViewController(userBookingSomethingController, animated: true);
     }
     
     lazy var xButton: UIButton = {
@@ -104,7 +101,7 @@ class BusinessPageController: UIViewController {
     private var streetText: UITextView = {
         let uitv = Components().createSimpleText(text: "");
         uitv.font = .boldSystemFont(ofSize: 14);
-        uitv.setHeight(height: 40);
+        
         uitv.backgroundColor = .literGray;
         return uitv;
     }()
@@ -113,7 +110,7 @@ class BusinessPageController: UIViewController {
         let uitv = Components().createSimpleText(text: "");
         uitv.font = .boldSystemFont(ofSize: 14);
         uitv.backgroundColor = .literGray;
-        uitv.setHeight(height: 40);
+        
         return uitv;
     }()
     
@@ -121,7 +118,7 @@ class BusinessPageController: UIViewController {
         let uitv = Components().createSimpleText(text: "");
         uitv.font = .boldSystemFont(ofSize: 14);
         uitv.backgroundColor = .literGray;
-        uitv.setHeight(height: 40);
+        
         return uitv;
     }()
     
@@ -129,7 +126,7 @@ class BusinessPageController: UIViewController {
         let uitv = Components().createSimpleText(text: "");
         uitv.font = .boldSystemFont(ofSize: 14);
         uitv.backgroundColor = .literGray;
-        uitv.setHeight(height: 40);
+        
         return uitv;
     }()
     
@@ -137,7 +134,7 @@ class BusinessPageController: UIViewController {
         let uitv = Components().createSimpleText(text: "");
         uitv.font = .boldSystemFont(ofSize: 14);
         uitv.backgroundColor = .literGray;
-        uitv.setHeight(height: 40);
+        
         return uitv;
     }()
     
@@ -145,7 +142,7 @@ class BusinessPageController: UIViewController {
         let uitv = Components().createSimpleText(text: "");
         uitv.font = .boldSystemFont(ofSize: 14);
         uitv.backgroundColor = .literGray;
-        uitv.setHeight(height: 40);
+        
         return uitv;
     }()
     
@@ -234,16 +231,15 @@ class BusinessPageController: UIViewController {
     func getBusinessInfo() {
         let data = ["businessId": self.businessId!];
         API().post(url: "http://localhost:4000/api/business/appBusiness", dataToSend: data) { (res) in
-            print(res)
-            if var business = res["business"] as? [String: Any] {
-                self.schedule = Schedule(dic: business["schedule"] as! [[String: String]])
-                business.removeValue(forKey: "schedule");
-                let actualBusiness = business as! [String: String];
-                self.business = Business(dic: actualBusiness);
+            if let business = res["business"] as? [String: Any] {
+                self.business = Business(dic: business);
             }
-            if let services = res["services"] as? [String] {
-               
-                self.services = services;
+            if let services = res["services"] as? [[String:Any]] {
+                var servicesArray: [Service] = []
+                for service in services {
+                    servicesArray.append(Service(dic: service));
+                }
+                self.services = servicesArray;
             }
         }
     }
@@ -261,22 +257,24 @@ class BusinessPageController: UIViewController {
         scrollView.setWidth(width: view.frame.width);
         let infoView = UIStackView(arrangedSubviews: [streetText, cityText, stateText, zipText, phoneText, webText]);
         infoView.backgroundColor = .liteGray;
-        infoView.setHeight(height: 225);
+        infoView.setHeight(height: 231.5);
         infoView.setWidth(width: view.frame.width / 2.05);
         infoView.backgroundColor = .liteGray;
         infoView.axis = .vertical;
+        infoView.distribution = .fillEqually;
         scrollView.addSubview(locationHoursText);
         locationHoursText.padTop(from: scrollView.topAnchor, num: 10);
         locationHoursText.centerTo(element: view.centerXAnchor);
         scrollView.addSubview(infoView);
         infoView.padLeft(from: view.leftAnchor, num: view.frame.width / 2 - view.frame.width / 2.05);
-        infoView.padTop(from: scrollView.topAnchor, num: 70);
+        infoView.padTop(from: scrollView.topAnchor, num: 72);
         let scheduleView = UIStackView(arrangedSubviews: [sunText, monText, tueText, wedText, thuText, friText, satText]);
         scheduleView.backgroundColor = .liteGray;
         scheduleView.setHeight(height: 225);
         scheduleView.setWidth(width: view.frame.width / 2);
         scheduleView.backgroundColor = .liteGray;
         scheduleView.axis = .vertical;
+        scheduleView.distribution = .fillEqually;
         scrollView.addSubview(scheduleView);
         scheduleView.padRight(from: view.rightAnchor, num: view.frame.width / 2 - view.frame.width / 2.05);
         scheduleView.padTop(from: scrollView.topAnchor, num: 70);

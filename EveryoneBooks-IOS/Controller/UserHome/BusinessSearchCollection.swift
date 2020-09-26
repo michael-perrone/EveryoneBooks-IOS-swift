@@ -11,7 +11,8 @@ import UIKit
 protocol CollectionViewCellDelegate: BusinessSearchCollection {
     func showBusiness(bpId: String)
     func followBusiness(index: Int)
-    func unFollowBusiness(index: Int)
+    func unFollowBusiness(idParameter: String)
+    func goToBook(business: Business)
 }
 
 class BusinessSearchCollection: UICollectionViewController, CollectionViewCellDelegate  {
@@ -25,19 +26,28 @@ class BusinessSearchCollection: UICollectionViewController, CollectionViewCellDe
         self.present(nav, animated: true, completion: nil);
     }
     
+    func goToBook(business: Business) {
+        let userBookingSomething = UserBookingSomething();
+        userBookingSomething.comingFromBusinessPage = false;
+        userBookingSomething.business = business; 
+        navigationController?.pushViewController(userBookingSomething, animated: true);
+    }
+    
     func followBusiness(index: Int) {
-        print(index)
-        businessesFollowing?.append(businesses![index]["_id"] as! String);
+        businessesFollowing?.append((businesses![index].id)!);
     }
     
-    func unFollowBusiness(index: Int) {
-        print(index)
-         businessesFollowing?.remove(at: index);
+    func unFollowBusiness(idParameter: String) {
+        
+        businessesFollowing?.removeAll(where: { (id) -> Bool in
+            return id == idParameter;
+        })
+        
     }
     
     
     
-    var businesses: [[String:Any]]? {
+    var businesses: [Business]? {
         didSet {
             getFollowing()
         }
@@ -80,15 +90,25 @@ class BusinessSearchCollection: UICollectionViewController, CollectionViewCellDe
     }
 
     func getFollowing() {
-            API().get(url: "http://localhost:4000/api/userProfile/following", headerToSend: Utilities().getToken()) { (res) in
-                guard let businessesFollow = res["businessesFollowing"] as? [String] else {return}
-                self.businessesFollowing = businessesFollow;
+        API().get(url: "http://localhost:4000/api/userProfile/following", headerToSend: Utilities().getToken()) { (res) in
+            guard let businessesFollowingBack = res["businessesFollowing"] as? [String] else {return};
+            var realBusinessesFollowing: [String] = [];
+            var businessesArray: [String] = [];
+            for business in self.businesses! {
+                businessesArray.append(business.id as! String);
+            }
+            for businessFollowing in businessesFollowingBack {
+                if businessesArray.contains(businessFollowing) {
+                    realBusinessesFollowing.append(businessFollowing);
+                }
+            }
+            self.businessesFollowing = businessesFollowingBack;
         }
     }
 }
 
 extension BusinessSearchCollection {
-
+    
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
     if let businesses = businesses {
         return businesses.count;
@@ -106,7 +126,7 @@ override func collectionView(_ collectionView: UICollectionView, cellForItemAt i
                 cell.following = false;
             }
             else {
-                if businessesFollowing.contains(businesses[indexPath.row]["_id"] as! String)  {
+                if businessesFollowing.contains(businesses[indexPath.row].id!)  {
                         cell.following = true;
                     }
                     
@@ -116,16 +136,15 @@ override func collectionView(_ collectionView: UICollectionView, cellForItemAt i
             }
         }
         
-        cell.webText.text = businesses[indexPath.row]["website"] as? String;
-        cell.phoneText.text = businesses[indexPath.row]["phoneNumber"] as? String;
-        cell.businessName.text = businesses[indexPath.row]["businessName"]! as? String ;
-        cell.streetText.text = businesses[indexPath.row]["address"]! as? String;
-        cell.cityText.text = businesses[indexPath.row]["city"]! as? String ;
-        cell.stateText.text = businesses[indexPath.row]["state"]! as? String ;
-        cell.zipText.text = businesses[indexPath.row]["zip"]! as? String;
-        let scheduleBack = businesses[indexPath.row]["schedule"] as! [[String:String]];
-        cell.schedule = Schedule(dic: scheduleBack);
-        cell.bID = businesses[indexPath.row]["_id"] as! String;
+        cell.webText.text = businesses[indexPath.row].website;
+        cell.phoneText.text = businesses[indexPath.row].phone;
+        cell.businessName.text = businesses[indexPath.row].nameOfBusiness;
+        cell.streetText.text = businesses[indexPath.row].street;
+        cell.cityText.text = businesses[indexPath.row].city ;
+        cell.stateText.text = businesses[indexPath.row].state ;
+        cell.zipText.text = businesses[indexPath.row].zip;
+        cell.bID = businesses[indexPath.row].id as! String;
+        cell.business = businesses[indexPath.row];
         cell.index_ = indexPath.row;
         cell.configureView();
         cell.delegate = self;

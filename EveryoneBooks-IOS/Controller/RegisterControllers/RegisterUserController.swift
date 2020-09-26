@@ -169,7 +169,6 @@ class RegisterUserController: UIViewController {
         emailInput.centerTo(element: view.centerXAnchor);
         emailInput.padTop(from: fullNameInput.bottomAnchor, num: 20)
         
-        
         view.addSubview(passwordInput);
         passwordInput.centerTo(element: view.centerXAnchor);
         passwordInput.padTop(from: emailInput.bottomAnchor, num: 20);

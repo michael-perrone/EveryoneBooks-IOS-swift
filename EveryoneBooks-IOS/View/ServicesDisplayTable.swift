@@ -19,7 +19,7 @@ class ServicesDisplayTable: UITableView, UITableViewDataSource {
         fatalError("init(coder:) has not been implemented")
     }
     
-    var services: [String]? {
+    var services: [Service]? {
         didSet {
             DispatchQueue.main.async {
                 self.reloadData();
@@ -53,7 +53,8 @@ class ServicesDisplayTable: UITableView, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath);
         if let services = services {
             if services.count > 0 {
-                cell.textLabel?.text = services[indexPath.row];
+                cell.selectionStyle = .none
+                cell.textLabel?.text = services[indexPath.row].serviceName;
             }
         }
         return cell;

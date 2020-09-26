@@ -9,51 +9,137 @@
 import UIKit
 
 class AdminBookings: UIViewController {
-    
-    var business: Business? {
+
+    var bookings: [[Booking]]? {
         didSet {
-            getBookings();
+            self.roomAreaTable.bookings = self.bookings;
         }
     }
     
-    var schedule: Schedule?;
+    var timeSlots: Int?;
     
-    lazy var businessEditButton: UIButton = {
-          let uib = Components().createGoToBusinessEdit()
-          uib.addTarget(self, action: #selector(editBusiness), for: .touchUpInside);
-          return uib;
-      }()
-      
-      @objc func editBusiness() {
-          let editBusiness = EditBusinessProfile();
-          editBusiness.modalPresentationStyle = .fullScreen;
-          self.present(editBusiness, animated: true, completion: nil);
-      }
-
-
+    private let chooseDateText: UITextView = {
+        let uitv = Components().createSimpleText(text: "Choose Date:");
+        uitv.backgroundColor = .mainLav;
+        return uitv;
+    }()
+    
+    private let datePicker: MyDatePicker = {
+        let dp = MyDatePicker();
+        dp.addTarget(self, action: #selector(dateChanged), for: .valueChanged);
+        return dp;
+    }()
+    
+    private let roomAreaTable: RoomAreaCollectionView = {
+        let ratv = RoomAreaCollectionView();
+        ratv.backgroundColor = .mainLav;
+        return ratv;
+    }();
+    
+    private let border = Components().createBorder(height: 2, width: fullWidth, color: .darkGray);
+    
+    @objc func dateChanged() {
+        let df = DateFormatter();
+        df.dateFormat = "MMM dd, yyyy";
+        let dateNeeded = df.string(from: datePicker.date);
+        getBookings(date: dateNeeded);
+        self.roomAreaTable.date = dateNeeded;
+    }
+    
+    lazy var createBookingButton: UIButton = {
+        let uib = Components().createAddBooking();
+        uib.addTarget(self, action: #selector(showCreateBooking), for: .touchUpInside);
+        return uib;
+    }()
+    
+    @objc func showCreateBooking() {
+        let createBooking = CreateBooking();
+        createBooking.modalPresentationStyle = .fullScreen;
+        self.present(createBooking, animated: true, completion: nil);
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated);
+       
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad();
         navigationItem.title = "Schedule";
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: businessEditButton);
-        // Do any additional setup after loading the view.
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: createBookingButton);
+       
+        configureView()
+        print("VIEW LOADED")
+        let df = DateFormatter();
+        df.dateFormat = "MMM dd, yyyy";
+        let dateNeeded = df.string(from: datePicker.date);
+        getBookings(date: dateNeeded);
+        self.roomAreaTable.date = dateNeeded;
     }
     
-    
-    
-    
-    func getBookings() {
-        
+    func configureView() {
+        view.addSubview(chooseDateText);
+        chooseDateText.centerTo(element: view.centerXAnchor);
+        chooseDateText.padTop(from: view.safeAreaLayoutGuide.topAnchor, num: 10);
+        view.addSubview(datePicker);
+        datePicker.padTop(from: chooseDateText.bottomAnchor, num: 7);
+        datePicker.centerTo(element: view.centerXAnchor);
+        view.addSubview(roomAreaTable);
+        roomAreaTable.setWidth(width: fullWidth);
+        roomAreaTable.padTop(from: view.safeAreaLayoutGuide.topAnchor, num: (datePicker.frame.height / 1.7));
+        roomAreaTable.padBottom(from: view.safeAreaLayoutGuide.bottomAnchor, num: 0);
+        roomAreaTable.centerTo(element: view.centerXAnchor);
+        view.addSubview(border);
+        border.padTop(from: roomAreaTable.topAnchor, num: -2);
+        border.centerTo(element: view.centerXAnchor);
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func getBookings(date: String) {
+        let dateToSend: [String: String] = ["date": date];
+        API().post(url: myURL + "adminSchedule", headerToSend: Utilities().getAdminToken(), dataToSend: dateToSend) { (res) in
+            if res["statusCode"] as? Int == 200 {
+                if let bct = res["bct"] as? String {
+                    self.roomAreaTable.bct = bct;
+                }
+                if let open = res["open"] as? String, let close = res["close"] as? String {
+                    let num = Utilities().getTimeNum(startTime: open, endTime: close);
+                    
+                    self.roomAreaTable.openTime = open;
+                    self.roomAreaTable.closeTime = close;
+                    self.roomAreaTable.timeSlotNum = num;
+                }
+                if let bcn = res["bcn"] as? String {
+                    if let bookings = res["bookings"] as? [[String: Any]] {
+                        var bookingsArray: [Booking] = [];
+                        for booking in bookings {
+                            let newBooking = Booking(dic: booking);
+                            bookingsArray.append(newBooking)
+                        }
+                        let bcnInt = Int(bcn)
+                        var i = 1;
+                        var arrayOfBookingArrays: [[Booking]] = [];
+                        if let bcnUnwrapped = bcnInt {
+                            while i <= bcnUnwrapped {
+                                var bookingArrayToBeAppended: [Booking] = [];
+                                for individualBooking in bookingsArray {
+                                    if Int(individualBooking.bcn!) == i {
+                                        bookingArrayToBeAppended.append(individualBooking);
+                                    }
+                                }
+                                arrayOfBookingArrays.append(bookingArrayToBeAppended);
+                                i = i + 1;
+                            }
+                            self.bookings = arrayOfBookingArrays;
+                            
+                        }
+                        else {
+                            print("No")
+                        }
+                    } else {
+                        print("Double no")
+                    }
+                }
+            }
+        }
     }
-    */
-
 }

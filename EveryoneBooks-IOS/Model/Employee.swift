@@ -9,13 +9,11 @@
 import Foundation
 
 struct Employee {
-    let fullName: String?;
-    let id: String?;
-    let bookingsToday: [Booking]?;
+    let fullName: String;
+    let id: String;
     
-    init(dic: [String: String], bookingsToday: [Booking]) {
-        self.fullName = dic["fullName"];
-        self.id = dic["id"];
-        self.bookingsToday = bookingsToday;
+    init(dic: [String: String]) {
+        self.fullName = dic["fullName"] as! String;
+        self.id = dic["_id"] as! String;
     }
 }

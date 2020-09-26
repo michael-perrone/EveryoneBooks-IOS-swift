@@ -8,7 +8,36 @@
 
 import UIKit
 
-class AdminNotifications: UIViewController {
+protocol RequestAnswerCell {
+    func tapped(noti: RequestAnswerNotification);
+    
+}
+
+protocol MessageViewControllerProtocol: AdminNotifications {
+    func answerHit();
+}
+
+class AdminNotifications: UICollectionViewController, RequestAnswerCell, MessageViewControllerProtocol {
+    
+    func answerHit() {
+        getAdminNotis()
+    }
+    
+    func tapped(noti: RequestAnswerNotification) {
+        let messageVC = MessageViewController();
+        messageVC.requestAnswerNoti = noti;
+        messageVC.delegate = self;
+        present(messageVC, animated: true, completion: nil);
+    }
+    
+    var adminNotifications: [RequestAnswerNotification]? {
+        didSet {
+            print("wingowat")
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
+        }
+    }
     
     lazy var businessEditButton: UIButton = {
         let uib = Components().createGoToBusinessEdit()
@@ -24,20 +53,74 @@ class AdminNotifications: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.title = "Notifications"
+        navigationItem.title = "Notifications";
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: businessEditButton);
-        // Do any additional setup after loading the view.
+        collectionView.register(UnreadRequestAnswerNotificationCell.self, forCellWithReuseIdentifier: "UnreadAdminNotiCell");
+        collectionView.register(ReadRequestAnswerNotificationCell.self, forCellWithReuseIdentifier: "ReadAdminNotiCell");
+        collectionView.backgroundColor = .mainLav;
+         
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated);
+       getAdminNotis()
     }
-    */
+    
+    func getAdminNotis() {
+        API().get(url: myURL + "notifications/getAdminNotis", headerToSend: Utilities().getAdminToken()) { (res) in
+            if res["statusCode"] as? Int == 200 {
+                var notis = res["notifications"] as? [[String: Any]];
+                var adminNotificationsArray: [RequestAnswerNotification] = [];
+                if let notis = notis {
+                    for noti in notis {
+                        var adminNotification = RequestAnswerNotification(dic: noti);
+                        adminNotificationsArray.insert(adminNotification, at: 0);
+                    }
+                    self.adminNotifications = adminNotificationsArray;
+                }
+            }
+        }
+    }
+    
+    
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if let adminNotis = self.adminNotifications {
+            print(adminNotis.count)
+            return adminNotis.count;
+        }
+        else {return 0};
+     }
+     
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if let adminNotis = self.adminNotifications {
+            let noti = adminNotis[indexPath.row];
+            if noti.answer == nil {
+                let unreadCell = collectionView.dequeueReusableCell(withReuseIdentifier: "UnreadAdminNotiCell", for: indexPath) as! UnreadRequestAnswerNotificationCell;
+                unreadCell.noti = noti;
+                unreadCell.layoutCell();
+                unreadCell.layoutUnreadCell()
+                unreadCell.delegate = self;
+                return unreadCell;
+            }
+            else {
+                let readCell = collectionView.dequeueReusableCell(withReuseIdentifier: "ReadAdminNotiCell", for: indexPath) as! ReadRequestAnswerNotificationCell;
+                    readCell.noti = noti;
+                    readCell.layoutReadCell()
+                    readCell.layoutCell();
+                    readCell.delegate = self;
+                    return readCell;
+            }
+        }
+        return RequestAnswerNotificationCell()
+    }
+   
+}
 
+extension AdminNotifications: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: UIScreen.main.bounds.width, height: 95);
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+              return 0
+          }
 }

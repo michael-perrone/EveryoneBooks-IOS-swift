@@ -40,6 +40,48 @@ class Components {
         return uitv;
     }
     
+    func createYesAnswer(answer: String) -> UIView {
+        let uiv = UIView();
+        let uiiv = UIImageView(image: UIImage(named: "suc"));
+        uiv.addSubview(uiiv);
+        uiv.setHeight(height: 72);
+        uiv.setWidth(width: fullWidth / 1.2);
+        uiiv.padTop(from: uiv.topAnchor, num: 0);
+        uiiv.padLeft(from: uiv.leftAnchor, num: 15);
+        let uitv = UITextView();
+        uitv.text = answer;
+        uiv.addSubview(uitv);
+        uitv.padTop(from: uiv.topAnchor, num: 0);
+        uitv.padLeft(from: uiiv.rightAnchor, num: 8);
+        uitv.font = UIFont(name: "Noteworthy-Bold", size: 30);
+        uitv.backgroundColor = .mainLav;
+        uitv.setHeight(height: 40);
+        uitv.setWidth(width: fullWidth / 1.3)
+        uitv.isScrollEnabled = false;
+        uitv.isEditable = false;
+        return uiv;
+       }
+    
+    func createNoAnswer(answer: String) -> UIView {
+        let uiv = UIView();
+        let uiiv = UIImageView(image: UIImage(named: "deny"));
+        uiv.addSubview(uiiv);
+        uiv.setHeight(height: 72);
+        uiv.setWidth(width: fullWidth / 1.2);
+        uiiv.padTop(from: uiv.topAnchor, num: 0);
+        uiiv.padLeft(from: uiv.leftAnchor, num: 15);
+        let uitv = UITextView();
+        uitv.text = answer;
+        uiv.addSubview(uitv);
+        uitv.padTop(from: uiv.topAnchor, num: 0);
+        uitv.padLeft(from: uiiv.rightAnchor, num: 20);
+        uitv.font = UIFont(name: "Noteworthy", size: 30);
+        uitv.backgroundColor = .mainLav;
+        uitv.isScrollEnabled = false;
+        uitv.isEditable = false;
+        return uiv;
+    }
+    
     func createCancelButton(height: CGFloat, width: CGFloat) -> UIButton {
         let uib = UIButton(type: .system);
         uib.setTitle("Close", for: .normal)
@@ -102,21 +144,53 @@ class Components {
          return uib;
     }
     
+    // MARK: -CREATE TITLE TEXT
+    
+    func createTitleText(text: String) -> UITextView {
+        let uitv = UITextView();
+        uitv.font = .boldSystemFont(ofSize: 18);
+        uitv.text = text;
+        uitv.isEditable = false;
+        uitv.isScrollEnabled = false;
+        uitv.backgroundColor = .clear;
+        uitv.setWidth(width: fullWidth / 1.1);
+        return uitv;
+    }
+    
+    // MARK: -CREATE DETAIL TEXT
+    
+    func createDetailText(text: String) -> UITextView {
+        let uitv = UITextView();
+        uitv.font = .systemFont(ofSize: 15);
+        uitv.text = text;
+        uitv.isEditable = false;
+        uitv.isScrollEnabled = false;
+        uitv.backgroundColor = .clear;
+        uitv.setWidth(width: fullWidth / 1.1);
+        return uitv;
+    }
+    // MARK: -BORDER
+    
+    func createBorder(height: CGFloat, width: CGFloat, color: UIColor) -> UIView {
+        let uiv = UIView();
+        uiv.setHeight(height: height);
+        uiv.setWidth(width: width);
+        uiv.backgroundColor = color;
+        return uiv;
+    }
     
     // MARK: - FRONT PAGE LOGIN SCREEN BUTTONS
     
-    
     func createFrontButtons(title: String, view: UIView) -> UIButton {
         let frontButton = UIButton(type: .system);
-        frontButton.setTitle(title, for: .normal);
         frontButton.titleLabel?.font = UIFont(name: "ChalkboardSE-Bold", size: 24)
         frontButton.setHeight(height: 50);
         frontButton.setWidth(width: view.frame.width / 1.3);
-        frontButton.layer.borderColor = CGColor(srgbRed: 0.4, green: 0.4, blue: 0.4, alpha: 1);
+        frontButton.layer.borderColor = CGColor(srgbRed: 0, green: 0, blue: 0, alpha: 1);
         frontButton.layer.borderWidth = 2.0;
         frontButton.layer.cornerRadius = 6;
         frontButton.backgroundColor = .white;
-        frontButton.setTitleColor(.black, for: .normal);
+        frontButton.setAttributedTitle(NSAttributedString(string: title, attributes: [NSAttributedString.Key.foregroundColor : UIColor.black]), for: .normal);
         return frontButton;
     }
     
@@ -183,6 +257,15 @@ class Components {
         return uitv;
     }
     
+    // MARK: - LARGER TEXT
+    
+    func createLargerText(text: String) -> UITextView {
+        let uitv = UITextView()
+        uitv.text = text;
+        uitv.font = .boldSystemFont(ofSize: 28);
+        return uitv;
+    }
+    
     // MARK: - NAVBARITEM
     
     func createNavBarItemController(image: UIImage?, viewController: UIViewController, title: String) -> UINavigationController {
@@ -213,6 +296,31 @@ class Components {
         return uitv;
     }
     
+    // MARK: -COOL BUTTON
+    
+    func createCoolButton(title: String) -> UIButton {
+        let uib = UIButton(type: .system);
+        uib.setAttributedTitle(NSAttributedString(string: title, attributes: [NSAttributedString.Key.foregroundColor: UIColor.black, NSAttributedString.Key.font: UIFont(name: "ChalkboardSE-Bold", size: 24)]), for: .normal);
+        uib.backgroundColor = .liteGray;
+        uib.layer.borderColor = .CGBlack;
+        uib.layer.borderWidth = 0.8;
+        uib.layer.cornerRadius = 3;
+        uib.setHeight(height: 40);
+        uib.setWidth(width: fullWidth / 1.2)
+        return uib;
+    }
+    
+    func createGoodButton(title: String) -> UIButton {
+        let uib = UIButton(type: .system);
+        uib.layer.borderColor = CGColor.CGBlack;
+        uib.layer.borderWidth = 1.0;
+        uib.setHeight(height: 30);
+        uib.setWidth(width: 70);
+        uib.setTitle(title, for: .normal);
+        uib.tintColor = .black;
+        return uib;
+    }
+    
     func createBorder(view: UIView) -> UIView {
         let uiv = UIView();
         uiv.setWidth(width: view.frame.width);
@@ -229,6 +337,13 @@ class Components {
         return uiiv;
     }
     
+    func createBackDrop() -> UIView {
+        let uiv = UIView();
+        uiv.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height);
+        uiv.backgroundColor = UIColor.black.withAlphaComponent(0.75);
+        return uiv;
+    }
+    
     
     func createGoToBusinessEdit() -> UIButton {
         let uib = UIButton(type: .system);
@@ -237,6 +352,14 @@ class Components {
         uib.setWidth(width: 100);
         return uib;
     }
+    
+    func createAddBooking() -> UIButton {
+           let uib = UIButton(type: .system);
+           uib.setAttributedTitle(NSAttributedString(string: "Add Booking", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 15)]), for: .normal)
+           uib.setHeight(height: 30);
+           uib.setWidth(width: 100);
+           return uib;
+       }
     
     func createWhiteUIView(width: CGFloat, height: CGFloat) -> UIView {
         let uiv = UIView();
@@ -247,7 +370,7 @@ class Components {
         uiv.backgroundColor = .white;
         return uiv;
     }
-    
+
     func createHelpLeftButton() -> UIButton {
         let uib = UIButton(type: .system);
         uib.setAttributedTitle(NSAttributedString(string: "Help", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 16)]), for: .normal);
@@ -281,6 +404,49 @@ class Components {
         uitv.padTop(from: uiv.topAnchor, num: 2);
         uitv.centerTo(element: uiv.centerXAnchor);
         uiiv.padRight(from: uitv.leftAnchor, num: 4);
+        uitv.backgroundColor = .mainLav;
         return uiv;
     }
+    
+    func createContinueBookingButton() -> UIButton {
+            let uib = UIButton(type: .system);
+            let attributedTitle = NSAttributedString(string: "Continue", attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 20), NSAttributedString.Key.foregroundColor: UIColor.mainLav])
+            uib.setAttributedTitle(attributedTitle, for: .normal);
+            uib.backgroundColor = .darkGray;
+            uib.layer.cornerRadius = 30;
+            uib.setHeight(height: 60);
+            uib.setWidth(width: UIScreen.main.bounds.width / 1.2);
+            uib.showsTouchWhenHighlighted = true;
+            return uib;
+    }
+    
+    func createLittleText(text: String) -> UITextView {
+           let uitv = UITextView();
+           uitv.isEditable = false;
+           uitv.isScrollEnabled = false;
+           uitv.text = text;
+           uitv.font = .boldSystemFont(ofSize: 14);
+           uitv.backgroundColor = .literGray;
+           return uitv;
+    }
+    
+    func createNotAsLittleText(text: String) -> UITextView {
+             let uitv = UITextView();
+             uitv.isEditable = false;
+             uitv.isScrollEnabled = false;
+             uitv.text = text;
+             uitv.font = .boldSystemFont(ofSize: 16);
+             uitv.backgroundColor = .literGray;
+             return uitv;
+      }
+    
+    func createMenuButton() -> UIButton {
+        let uib = UIButton(type: .system);
+        uib.setHeight(height: 40);
+        uib.setWidth(width: 40);
+        uib.setBackgroundImage(UIImage(named: "menu"), for: .normal);
+        return uib;
+    }
+    
+    
 }

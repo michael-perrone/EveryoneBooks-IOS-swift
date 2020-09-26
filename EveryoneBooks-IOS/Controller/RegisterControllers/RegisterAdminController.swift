@@ -219,6 +219,7 @@ class RegisterAdminController: UIViewController {
             progressBar.progress = 0.75;
         }
         else if !regSixEntered {
+            print(regAdminSix.getThuOpen())
             monOpen = regAdminSix.getMonOpen();
             monClose = regAdminSix.getMonClose();
             tueOpen = regAdminSix.getTueOpen();
@@ -236,21 +237,32 @@ class RegisterAdminController: UIViewController {
             error = "";
         }
         else if !regSevenEntered {
-            if let bookingColumnNumber = regAdminSeven.getBookingColumnNumber(), let bookingColumnType = regAdminSeven.getBookingColumnType() {
-            let url = "http://localhost:4000/api/adminSignup";
-                let dataToSend = ["businessName": businessName, "typeOfBusiness": typeOfBusiness, "email": email, "password": password, "address": street, "city": city, "state": state, "zip": zip, "phoneNumber": phone, "website": website, "satOpen": satOpen, "satClose": satClose, "sunOpen": sunOpen, "sunClose": sunClose, "monOpen": monOpen, "monClose": monClose, "tueOpen": tueOpen, "tueClose": tueClose, "wedOpen": wedOpen, "wedClose": wedClose, "thuOpen": thuOpen, "thuClose": thuClose, "friOpen": friOpen, "friClose": friClose, "bookingColumnNumber": bookingColumnNumber, "bookingColumnType": bookingColumnType];
-                BasicCalls().register(urlString: url, dataToSend: dataToSend) { (token) in
-                    if Utilities().setTokenInKeyChain(token: token, key: "adminToken") {
-                        DispatchQueue.main.async {
-                            let adminHome = AdminHomeController();
-                            adminHome.modalTransitionStyle = .crossDissolve;
-                            self.navigationController?.pushViewController(adminHome, animated: true);
+            if let bookingColumnNumber = regAdminSeven.getBookingColumnNumber(), let bookingColumnType = regAdminSeven.getBookingColumnType(), let eq = regAdminSeven.eq {
+                if bookingColumnNumber != "" && bookingColumnType != "" {
+                    let url = "http://localhost:4000/api/adminSignup";
+                    let dataToSend = ["businessName": businessName, "typeOfBusiness": typeOfBusiness, "email": email, "password": password, "address": street, "city": city, "state": state, "zip": zip, "phoneNumber": phone, "website": website, "satOpen": satOpen, "satClose": satClose, "sunOpen": sunOpen, "sunClose": sunClose, "monOpen": monOpen, "monClose": monClose, "tueOpen": tueOpen, "tueClose": tueClose, "wedOpen": wedOpen, "wedClose": wedClose, "thuOpen": thuOpen, "thuClose": thuClose, "friOpen": friOpen, "friClose": friClose, "bookingColumnNumber": bookingColumnNumber, "bookingColumnType": bookingColumnType, "eq": eq]
+                    BasicCalls().register(urlString: url, dataToSend: dataToSend) { (token) in
+                        if Utilities().setTokenInKeyChain(token: token, key: "adminToken") {
+                            DispatchQueue.main.async {
+                                let adminHome = AdminHomeController();
+                                adminHome.modalTransitionStyle = .crossDissolve;
+                                self.navigationController?.pushViewController(adminHome, animated: true);
+                            }
+                        }
+                        else {
+                            print("signup failed")
                         }
                     }
-                    else {
-                        print("signup failed")
-                    }
                 }
+                else {
+                    print("top two are blank")
+                }
+            }
+            else {
+                print("not good")
+                print(regAdminSeven.getBookingColumnType())
+                print(regAdminSeven.getBookingColumnNumber());
+                print(regAdminSeven.eq)
             }
         }
         errorText.text = error;
@@ -260,10 +272,10 @@ class RegisterAdminController: UIViewController {
     // MARK: - SELECTORS
     
     @objc func questionHit() {
-        let help = UINavigationController( rootViewController: HelpRegModal(collectionViewLayout: UICollectionViewFlowLayout()))
+        let help = UINavigationController( rootViewController: HelpRegModal())
         help.modalTransitionStyle = .crossDissolve;
         help.modalPresentationStyle = .fullScreen;
-        present(help, animated: true, completion: nil)
+        present(help, animated: true, completion: nil);
     }
     
     @objc func goBack() {

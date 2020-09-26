@@ -1,11 +1,3 @@
-//
-//  LoginController.swift
-//  EveryoneBooks-IOS
-//
-//  Created by Michael Perrone on 4/21/20.
-//  Copyright © 2020 Michael Perrone. All rights reserved.
-//
-
 import UIKit
 
 class LoginController: UIViewController {
@@ -49,6 +41,7 @@ class LoginController: UIViewController {
         let uib = Components().createNormalButton(title: "Login");
         uib.titleLabel?.font = .boldSystemFont(ofSize: 24)
         uib.addTarget(self, action: #selector(login), for: .touchUpInside);
+        uib.backgroundColor = .white;
         return uib;
     }()
     
@@ -133,10 +126,10 @@ class LoginController: UIViewController {
         view.backgroundColor = .mainLav;
         
         view.addSubview(logoText);
-        logoText.padTop(from: view.safeAreaLayoutGuide.topAnchor, num: 0);
+        logoText.padTop(from: view.safeAreaLayoutGuide.topAnchor, num: 15);
         logoText.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true;
-        logoText.setWidth(width: 85);
-        logoText.setHeight(height: 70);
+        logoText.setWidth(width: 60);
+        logoText.setHeight(height: 60);
         
         view.addSubview(loginInput);
         loginInput.padTop(from: logoText.bottomAnchor, num: 40);
@@ -150,7 +143,7 @@ class LoginController: UIViewController {
         loginButton.padTop(from: passwordInput.bottomAnchor, num: 20);
         loginButton.setHeight(height: 46);
         loginButton.centerTo(element: view.centerXAnchor);
-        loginButton.setWidth(width: view.frame.width / 1.8);
+        loginButton.setWidth(width: 120);
         
         view.addSubview(registerAsUserButton);
         registerAsUserButton.padTop(from: loginButton.bottomAnchor, num: view.frame.height / 6);

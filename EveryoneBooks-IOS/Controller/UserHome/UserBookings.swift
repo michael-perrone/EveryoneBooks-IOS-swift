@@ -8,27 +8,71 @@
 
 import UIKit
 
-class UserBookings: UIViewController {
+class UserBookings: UICollectionViewController {
+    
+    var bookings: [Booking]? {
+        didSet {
+            DispatchQueue.main.async {
+                self.collectionView.reloadData();
+            }
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated);
+        self.getBookings();
+    }
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.backgroundColor = .mainLav;
         navigationController?.navigationBar.barTintColor = .mainLav;
-        let logoView = UIImageView(image: UIImage(named: "logo-small"));
-        logoView.setHeight(height: 36);
-        logoView.setWidth(width: 36);
-        navigationItem.titleView = logoView;
+        navigationItem.title = "My Bookings";
+        collectionView.register(UserBookingsCollectionCell.self, forCellWithReuseIdentifier: "UserBookingsCell");
+        collectionView.backgroundColor = .literGray;
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    
+    func getBookings() {
+        API().get(url: myURL + "getBookings/ios", headerToSend: Utilities().getToken()) { (res) in
+            print(res)
+            var bookings: [Booking] = [];
+            if let bookingsBack = res["bookings"] as? [[String: Any]] {
+                print(bookingsBack)
+                for booking in bookingsBack {
+                    let actualBooking = Booking(dic: booking);
+                    bookings.append(actualBooking)
+                }
+                self.bookings = bookings;
+            }
+        }
     }
-    */
+}
 
+extension UserBookings {
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    if let bookings = bookings {
+        return bookings.count;
+    }
+    else {
+        return 0;
+    }
+}
+
+override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "UserBookingsCell", for: indexPath) as! UserBookingsCollectionCell;
+    if let bookings = bookings {
+        cell.booking = bookings[indexPath.row];
+        cell.configureCell()
+        }
+    return cell;
+    }
+}
+
+
+extension UserBookings: UICollectionViewDelegateFlowLayout {
+       func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: UIScreen.main.bounds.width, height: 260);
+    }
 }

@@ -12,7 +12,7 @@ class EmployeeAddTable: UIView {
    
     var url: String?;
     
-    var employees: [[String:String]]?;
+    var employees: [Employee]?
     
     var removing: [String] = [];
     
@@ -76,7 +76,7 @@ class EmployeeAddTable: UIView {
         
         addSubview(success);
         success.padTop(from: table.bottomAnchor, num: 10);
-        success.centerTo(element: centerXAnchor);
+        success.padLeft(from: leftAnchor, num: 20)
         success.isHidden = true;
         
         
@@ -102,7 +102,8 @@ extension EmployeeAddTable: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath);
         if let employees = employees {
             if employees.count > 0 {
-                cell.textLabel?.text = employees[indexPath.row]["fullName"];
+                cell.selectionStyle = .none
+                cell.textLabel?.text = employees[indexPath.row].fullName;
             }
         }
         return cell;
@@ -112,7 +113,7 @@ extension EmployeeAddTable: UITableViewDataSource {
         if let employeesIn = employees {
             if employeesIn.count > 0 {
                 if editingStyle == .delete {
-                    removing.append(employees![indexPath.row]["_id"]!)
+                    removing.append(employees![indexPath.row].id)
                     employees!.remove(at: indexPath.row)
                     tableView.deleteRows(at: [indexPath], with: .fade)
                     deleteButton.isHidden = false;
