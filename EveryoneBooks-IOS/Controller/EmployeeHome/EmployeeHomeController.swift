@@ -8,7 +8,7 @@
 
 import UIKit
 
-class EmployeeHomeController: UITabBarController {
+class EmployeeHomeController: TabBarSliderController {
     
     
     override func viewWillAppear(_ animated: Bool) {
@@ -22,11 +22,6 @@ class EmployeeHomeController: UITabBarController {
         configureView()
     }
     
-    private let menuButton: UIButton = {
-        let uib = Components().createMenuButton()
-        uib.addTarget(self, action: #selector(logout), for: .touchUpInside)
-        return uib;
-    }()
     
     func configureTabs() {
         print("ANY FUCKN THING")
@@ -55,21 +50,9 @@ class EmployeeHomeController: UITabBarController {
         }
     }
     
-    @objc func logout() {
-        let loginController = UINavigationController(rootViewController: LoginController());
-        loginController.modalPresentationStyle = .fullScreen;
-        loginController.modalTransitionStyle = .crossDissolve;
-        Utilities().logout(key: "employeeToken");
-        self.present(loginController, animated: true, completion: nil);
-    }
-    
     func configureView() {
         view.backgroundColor = .literGray;
         navigationController?.navigationBar.barTintColor = .mainLav;
-        view.addSubview(menuButton);
-        menuButton.padTop(from: view.safeAreaLayoutGuide.topAnchor, num: 5);
-        menuButton.padRight(from: view.rightAnchor, num: 20);
-        menuButton.padRight(from: view.rightAnchor, num: 20);
         tabBar.backgroundColor = .mainLav;
         tabBar.barTintColor = .mainLav;
     }

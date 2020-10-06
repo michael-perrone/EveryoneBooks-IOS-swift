@@ -57,7 +57,6 @@ class EmployeeBusinessSearchCollection: UICollectionViewController, EmployeeBusi
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         configureUI()
-        self.getFollowing();
     }
     
     @objc func goBack() {
@@ -76,18 +75,6 @@ class EmployeeBusinessSearchCollection: UICollectionViewController, EmployeeBusi
         logoView.setWidth(width: 36);
         navigationItem.titleView = logoView;
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: UIBarButtonItem.Style.plain , target: self, action: #selector(goBack))
-    }
-    
-    func getFollowing() {
-        API().get(url: "http://localhost:4000/api/userProfile/followingForTab", headerToSend: Utilities().getToken()) { (res) in
-            guard let businessesFollow = res["businessesFollowing"] as? [[String: Any]] else {return}
-            var businessesArray: [Business] = [];
-            for businessFollowing in businessesFollow {
-                let newBusiness = Business(dic: businessFollowing);
-                businessesArray.append(newBusiness);
-            }
-            self.businesses = businessesArray;
-        }
     }
 }
 

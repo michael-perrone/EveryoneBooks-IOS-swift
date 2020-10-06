@@ -8,11 +8,13 @@
 
 import UIKit
 
-class AdminBookings: UIViewController {
 
+class AdminBookings: UIViewController {
+    
     var bookings: [[Booking]]? {
         didSet {
             self.roomAreaTable.bookings = self.bookings;
+            print("bookings are above")
         }
     }
     
@@ -60,21 +62,19 @@ class AdminBookings: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated);
-       
     }
     
     override func viewDidLoad() {
         super.viewDidLoad();
         navigationItem.title = "Schedule";
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: createBookingButton);
-       
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: createBookingButton);
         configureView()
-        print("VIEW LOADED")
         let df = DateFormatter();
         df.dateFormat = "MMM dd, yyyy";
         let dateNeeded = df.string(from: datePicker.date);
         getBookings(date: dateNeeded);
         self.roomAreaTable.date = dateNeeded;
+        print("wingowat")
     }
     
     func configureView() {
@@ -130,7 +130,8 @@ class AdminBookings: UIViewController {
                                 i = i + 1;
                             }
                             self.bookings = arrayOfBookingArrays;
-                            
+                            print(self.bookings)
+                            print("self.bookings are above")
                         }
                         else {
                             print("No")

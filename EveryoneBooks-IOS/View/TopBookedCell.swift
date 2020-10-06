@@ -21,6 +21,19 @@ class TopBookedCell: UITableViewCell {
 //        // Configure the view for the selected state
 //    }
     
+    var booked: Bool? {
+         didSet {
+             if booked! {
+                 let tap = UITapGestureRecognizer(target: self, action: #selector(hit));
+                 addGestureRecognizer(tap);
+                 backgroundColor = UIColor.init(red: 300, green: 0, blue: 0, alpha: 0.3);
+                addSubview(topBorder);
+                     topBorder.padTop(from: topAnchor, num: 0);
+                     topBorder.centerTo(element: centerXAnchor);
+             }
+         }
+     }
+    
     private var time: String? {
         didSet {
             timeText.text = self.time;
@@ -52,15 +65,11 @@ class TopBookedCell: UITableViewCell {
     }
     
     func configureCell() {
-        let tap = UITapGestureRecognizer(target: self, action: #selector(hit));
-        addGestureRecognizer(tap)
-        addSubview(topBorder);
-        topBorder.padTop(from: topAnchor, num: 0);
-        topBorder.centerTo(element: centerXAnchor);
         addSubview(timeText);
         timeText.padTop(from: topAnchor, num: 4);
         timeText.centerTo(element: centerXAnchor);
-        backgroundColor = UIColor.init(red: 300, green: 0, blue: 0, alpha: 0.3);
     }
+    
+ 
     
 }

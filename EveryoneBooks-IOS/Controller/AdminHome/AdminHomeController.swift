@@ -8,28 +8,8 @@
 
 import UIKit
 
-class AdminHomeController: UITabBarController {
+class AdminHomeController: TabBarSliderController {
 
-    private let menuButton: UIButton = {
-        let uib = Components().createMenuButton();
-        uib.addTarget(self, action: #selector(logout), for: .touchUpInside);
-        uib.setHeight(height: 30);
-        uib.setWidth(width: 60)
-        return uib;
-    }();
-    
-    
-       
-    @objc func logout() {
-        Utilities().logout(key: "adminToken");
-        DispatchQueue.main.async {
-            let loginController = UINavigationController(rootViewController:LoginController());
-            loginController.modalTransitionStyle = .crossDissolve;
-            loginController.modalPresentationStyle = .fullScreen;
-            self.present(loginController, animated: true, completion: nil);
-        }
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureTabs()
@@ -46,9 +26,6 @@ class AdminHomeController: UITabBarController {
     
     func configureUI() {
         view.backgroundColor = .mainLav;
-        view.addSubview(menuButton);
-        menuButton.padLeft(from: view.leftAnchor, num: 20);
-        menuButton.padTop(from: view.safeAreaLayoutGuide.topAnchor, num: 10);
     }
     
     func getBusiness() {

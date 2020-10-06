@@ -17,6 +17,7 @@ class RoomAreaColumn: UICollectionViewCell {
     private var date: String? {
         didSet {
             columnTableView.setDate(date: self.date!);
+            
         }
     }
     
@@ -34,6 +35,10 @@ class RoomAreaColumn: UICollectionViewCell {
     
     func setBcn(bcn: String) {
         self.bcn = bcn;
+    }
+    
+    func getBcn() -> Int {
+        return Int(self.bcn!)!
     }
     
     func setDate(date: String) {
@@ -82,6 +87,7 @@ class RoomAreaColumn: UICollectionViewCell {
         columnTableView.padLeft(from: leftAnchor, num: 2);
         columnTableView.padRight(from: rightAnchor, num: 2);
         columnTableView.padBottom(from: safeAreaLayoutGuide.bottomAnchor, num: 20);
+        columnTableView.setBookings(bookings: []);
         addSubview(textBorder);
         textBorder.padBottom(from: columnTableView.topAnchor, num: 0.5);
         textBorder.padRight(from: rightAnchor, num: 2);

@@ -8,7 +8,25 @@
 
 import UIKit
 
-class CreateBooking: UIViewController {
+protocol BookingHit: CreateBooking {
+    func bookHit();
+}
+
+class CreateBooking: UIViewController, BookingHit {
+    
+    func bookHit() {
+          let bookSuccess = UIAlertController(title: "Success!", message: "You're request has been received and accepted.", preferredStyle: .alert);
+          let okayButton = UIAlertAction(title: "Exit!", style: .cancel) { (action: UIAlertAction) in
+              UIView.animate(withDuration: 0.45) {
+                  self.popUp.frame = CGRect(x: 0, y: UIScreen.main.bounds.height, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 1.6);
+              }
+          }
+          bookSuccess.addAction(okayButton);
+          DispatchQueue.main.async {
+              self.present(bookSuccess, animated: true, completion: nil);
+          }
+      }
+      
     
     var start: Int?;
     var close: Int? {
@@ -22,17 +40,14 @@ class CreateBooking: UIViewController {
         }
     }
     
-    
     var services: [Service]? {
-          didSet {
-              print(self.services)
-              servicesTable.data = self.services;
+        didSet {
+            servicesTable.data = self.services;
         }
     }
-
-    private let datePickerText = Components().createNotAsLittleText(text: "Choose Date:");
     
-  
+    var dateChosen: String?;
+    
     var employeesAvailable: [Employee]? {
         didSet {
             employeesTable.employees = self.employeesAvailable;
@@ -43,32 +58,49 @@ class CreateBooking: UIViewController {
         }
     }
     
+    lazy var customerNameInput: UIView = {
+        let uiv = Components().createInput(textField: customerPhoneTextField, view: view);
+        return uiv;
+    }()
+    
+    private let customerPhoneTextField: UITextField = {
+        let uitf = Components().createTextField(placeHolder: "Enter Customer Phone", fontSize: 18);
+        uitf.addTarget(self, action: #selector(sendPhone), for: .editingChanged)
+        return uitf;
+    }()
+    
+    @objc func sendPhone() {
+        employeesTable.phone = customerPhoneTextField.text;
+    }
+    
+    private let datePickerText = Components().createNotAsLittleText(text: "Choose Date:");
+    
     private let servicesChosenTable: ServicesChosenTable = {
-           let sct = ServicesChosenTable();
-           sct.setWidth(width: UIScreen.main.bounds.width / 1.3);
-           sct.setHeight(height: 150);
-           sct.backgroundColor = .clear;
-           return sct;
-       }()
+        let sct = ServicesChosenTable();
+        sct.setWidth(width: UIScreen.main.bounds.width / 1.3);
+        sct.setHeight(height: 150);
+        sct.backgroundColor = .clear;
+        return sct;
+    }()
     
     private let employeesTable: EmployeesAvailableTable = {
-           let eat = EmployeesAvailableTable();
-           eat.backgroundColor = .literGray;
-           return eat;
-       }()
+        let eat = EmployeesAvailableTable();
+        eat.fromBusiness = true;
+        eat.backgroundColor = .literGray;
+        return eat;
+    }()
     
     private let costText: UITextView = {
-           let uitv = Components().createLittleText(text: "");
-           uitv.font = .boldSystemFont(ofSize: 16);
-           uitv.backgroundColor = .mainLav;
-           return uitv;
-       }()
- 
+        let uitv = Components().createLittleText(text: "");
+        uitv.font = .boldSystemFont(ofSize: 16);
+        uitv.backgroundColor = .mainLav;
+        return uitv;
+    }()
     
     private let datePicker: UIDatePicker = {
         let uidp = UIDatePicker();
         uidp.datePickerMode = .date;
-        uidp.addTarget(self, action: #selector(dateChanged), for: .allEditingEvents);
+        uidp.addTarget(self, action: #selector(dateChanged), for: .valueChanged);
         uidp.setWidth(width: fullWidth / 1.2);
         uidp.setHeight(height: 110);
         return uidp;
@@ -81,13 +113,11 @@ class CreateBooking: UIViewController {
     }();
     
     private let popUp: UIView = {
-           let uisv = UIScrollView();
-           uisv.frame = CGRect(x: 0, y: UIScreen.main.bounds.height, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 1.5)
-           uisv.backgroundColor = .mainLav;
-           return uisv;
+        let uisv = UIScrollView();
+        uisv.frame = CGRect(x: 0, y: UIScreen.main.bounds.height, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 1.5)
+        uisv.backgroundColor = .mainLav;
+        return uisv;
     }()
-    
-    private let backDrop = Components().createBackDrop();
     
     private let timePickerText = Components().createNotAsLittleText(text: "Choose Time:");
     
@@ -113,18 +143,18 @@ class CreateBooking: UIViewController {
     }();
     
     private let servicesChosenText: UITextView = {
-         let uitv = Components().createLittleText(text: "Services Chosen: ");
-         uitv.backgroundColor = .mainLav;
-         uitv.font = .boldSystemFont(ofSize: 16);
-         return uitv;
-     }()
+        let uitv = Components().createLittleText(text: "Services Chosen: ");
+        uitv.backgroundColor = .mainLav;
+        uitv.font = .boldSystemFont(ofSize: 16);
+        return uitv;
+    }()
     
     lazy var employeesAvailableText: UITextView = {
-           let uitv = Components().createSimpleText(text: "Employees Avaliable");
-           uitv.backgroundColor = .mainLav;
-           uitv.font = .boldSystemFont(ofSize: 16);
-           return uitv;
-       }()
+        let uitv = Components().createSimpleText(text: "Employees Avaliable");
+        uitv.backgroundColor = .mainLav;
+        uitv.font = .boldSystemFont(ofSize: 16);
+        return uitv;
+    }()
     
     private let chooseServiceText: UITextView = {
         let uitv = Components().createLittleText(text: "Choose services to book:");
@@ -132,44 +162,37 @@ class CreateBooking: UIViewController {
     }()
     
     lazy var cancelButton: UIButton = {
-            let cancelB = UIButton(type: .system);
-            cancelB.addTarget(self, action: #selector(hideView), for: .touchUpInside);
-            let title = NSAttributedString(string: "X", attributes: [NSAttributedString.Key.foregroundColor: UIColor.black, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 24)]);
-            cancelB.setAttributedTitle(title, for: .normal);
-            cancelB.tintColor = .black;
-            cancelB.showsTouchWhenHighlighted = true;
-            cancelB.setHeight(height: 32);
-            cancelB.setWidth(width: 32);
-            return cancelB;
-       }()
-       
-       @objc func hideView() {
-             UIView.animate(withDuration: 0.45) {
-               self.popUp.frame = CGRect(x: 0, y: UIScreen.main.bounds.height, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 1.6);
-                 self.backDrop.alpha = 0;
-             }
-         }
-         
- 
+        let cancelB = Components().createXButton();
+        cancelB.addTarget(self, action: #selector(hideView), for: .touchUpInside)
+        return cancelB;
+    }()
     
-      @objc func continueHit() {
-          if servicesTable.selectedServices.count > 0 {
+    @objc func hideView() {
+        UIView.animate(withDuration: 0.45) {
+            self.popUp.frame = CGRect(x: 0, y: UIScreen.main.bounds.height, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 1.6);
+        }
+    }
+    
+    
+    
+    @objc func continueHit() {
+        if servicesTable.selectedServices.count > 0 {
             getAvailableEmployees()
-          }
-          else {
-              let noServicesSelected = UIAlertController(title: "No Services Selected", message: "Please select at least one service above that you would like performed.", preferredStyle: .alert);
-              let okay = UIAlertAction(title: "Got it", style: .cancel, handler: nil);
-              noServicesSelected.addAction(okay);
-              DispatchQueue.main.async {
-                  self.present(noServicesSelected, animated: true, completion: nil);
-              }
-          }
-      }
+        }
+        else {
+            let noServicesSelected = UIAlertController(title: "No Services Selected", message: "Please select at least one service above that you would like performed.", preferredStyle: .alert);
+            let okay = UIAlertAction(title: "Got it", style: .cancel, handler: nil);
+            noServicesSelected.addAction(okay);
+            DispatchQueue.main.async {
+                self.present(noServicesSelected, animated: true, completion: nil);
+            }
+        }
+    }
     @objc func dismissCreateBooking() {
         self.dismiss(animated: true, completion: nil);
     }
     
-    var dateChosen: String?;
+    
     
     @objc func dateChanged() {
         getTimes(date: datePicker.date)
@@ -183,10 +206,11 @@ class CreateBooking: UIViewController {
     }
     
     func configureView() {
+        employeesTable.otherOtherDelegate = self;
         view.backgroundColor = .literGray;
         view.addSubview(datePickerText);
         datePickerText.setWidth(width: fullWidth / 1.3);
-        datePickerText.padTop(from: view.safeAreaLayoutGuide.topAnchor, num: 15);
+        datePickerText.padTop(from: view.safeAreaLayoutGuide.topAnchor, num: 25);
         datePickerText.centerTo(element: view.centerXAnchor);
         view.addSubview(datePicker);
         datePicker.padTop(from: datePickerText.bottomAnchor, num: 8);
@@ -214,26 +238,27 @@ class CreateBooking: UIViewController {
         view.addSubview(continueButton);
         continueButton.padTop(from: servicesTable.bottomAnchor, num: 30);
         continueButton.centerTo(element: view.centerXAnchor);
-       view.addSubview(backDrop);
         view.addSubview(popUp);
-         backDrop.alpha = 0;
+        popUp.addSubview(customerNameInput);
+        customerNameInput.padTop(from: popUp.topAnchor, num: 32);
+        customerNameInput.padLeft(from: popUp.leftAnchor, num: 20);
         popUp.addSubview(timeDurationText);
-        timeDurationText.padTop(from: popUp.topAnchor, num: 6);
+        timeDurationText.padTop(from: customerNameInput.bottomAnchor, num: 10);
         timeDurationText.padLeft(from: popUp.leftAnchor, num: 20);
         popUp.addSubview(costText);
         costText.padTop(from: timeDurationText.bottomAnchor, num: 10);
         costText.padLeft(from: popUp.leftAnchor, num: 20);
         popUp.addSubview(servicesChosenText);
-        servicesChosenText.padTop(from: costText.bottomAnchor, num: 6);
+        servicesChosenText.padTop(from: costText.bottomAnchor, num: 10);
         servicesChosenText.padLeft(from: popUp.leftAnchor, num: 20);
         popUp.addSubview(servicesChosenTable);
-        servicesChosenTable.padTop(from: servicesChosenText.bottomAnchor, num: 6);
+        servicesChosenTable.padTop(from: servicesChosenText.bottomAnchor, num: 8);
         servicesChosenTable.centerTo(element: popUp.centerXAnchor);
         popUp.addSubview(employeesAvailableText);
         employeesAvailableText.padTop(from: servicesChosenTable.bottomAnchor, num: 2);
         employeesAvailableText.centerTo(element: popUp.centerXAnchor);
         popUp.addSubview(cancelButton);
-        cancelButton.padRight(from: view.rightAnchor, num: 10)
+        cancelButton.padRight(from: view.rightAnchor, num: 25)
         cancelButton.padTop(from: popUp.topAnchor, num: 15);
         popUp.addSubview(employeesTable)
         employeesTable.backgroundColor = .mainLav;
@@ -248,14 +273,14 @@ class CreateBooking: UIViewController {
     }
     
     func getAllTimes(start: Int, close: Int) {
-           var newStart = start;
-           var times: [String] = [];
-           while newStart < close {
-               times.append(Utilities.itst[newStart]!)
-               newStart += 1;
-           }
-           timePicker.data = times;
-       }
+        var newStart = start;
+        var times: [String] = [];
+        while newStart < close {
+            times.append(Utilities.itst[newStart]!)
+            newStart += 1;
+        }
+        timePicker.data = times;
+    }
     
     func getTimes(date: Date) {
         let df = DateFormatter();
@@ -271,89 +296,83 @@ class CreateBooking: UIViewController {
         API().post(url: myURL + "services/getServices", dataToSend: ["businessId": Utilities().decodeAdminToken()!["businessId"]!]) { (res) in
             if let services = res["services"] as? [[String: Any]] {
                 if services.count == 0 {
-                    print("no services")
                     DispatchQueue.main.async {
                         self.servicesTable.isHidden = true;
                         self.noServicesText.isHidden = false;
                     }
                     return;
                 }
-            var newServicesArray: [Service] = [];
-            for service in services {
-                newServicesArray.append(Service(dic: service));
-            }
-            self.services = newServicesArray;
+                var newServicesArray: [Service] = [];
+                for service in services {
+                    newServicesArray.append(Service(dic: service));
+                }
+                self.services = newServicesArray;
             }
         }
     }
     
     func getAvailableEmployees() {
-           var serviceIds: [String] = [];
-           var serviceNames: [String] = []
-           var timeDurationNum = 0;
-           var cost: Double = 0;
-           for selectedService in servicesTable.selectedServices {
-               serviceIds.append(selectedService.id);
-               serviceNames.append(selectedService.serviceName);
-               timeDurationNum = timeDurationNum + Utilities.timeDurationStringToInt[selectedService.timeDuration]!;
-               cost = cost + selectedService.cost;
-           }
-           let costString = String(cost);
-           let closeTime = Utilities.itst[Utilities.stit[timePicker.selectedItem!]! + timeDurationNum];
+        var serviceIds: [String] = [];
+        var serviceNames: [String] = []
+        var timeDurationNum = 0;
+        var cost: Double = 0;
+        for selectedService in servicesTable.selectedServices {
+            serviceIds.append(selectedService.id);
+            serviceNames.append(selectedService.serviceName);
+            timeDurationNum = timeDurationNum + Utilities.timeDurationStringToInt[selectedService.timeDuration]!;
+            cost = cost + selectedService.cost;
+        }
+        let costString = String(cost);
+        let closeTime = Utilities.itst[Utilities.stit[timePicker.selectedItem!]! + timeDurationNum];
         API().post(url: myURL + "getBookings", dataToSend: ["businessId": Utilities().decodeAdminToken()!["businessId"], "date": dateChosen, "serviceIds": serviceIds, "timeChosen": timePicker.selectedItem]) { (res) in
-               print(res)
-               if res["statusCode"] as! Int == 409 {
-                   let alert = UIAlertController(title: "Invalid Date", message: "The date or time you have chosen has already passed and cannot be scheduled.", preferredStyle: .alert);
-                   let woops = UIAlertAction(title: "Woops, Got it!", style: .cancel, handler: nil);
-                   alert.addAction(woops);
-                   DispatchQueue.main.async {
-                       self.present(alert, animated: true, completion: nil);
-                   }
-               }
-               if let employees = res["employees"] as? [[String: String]] {
-                   var newEmployeesArray: [Employee] = [];
-                   for employee in employees {
-                       let newEmployee = Employee(dic: employee)
-                       newEmployeesArray.append(newEmployee);
-                   }
-                   print(newEmployeesArray);
-                   print("DWDDQSDQSDFWDGFWJGKWGJWKDGJDWKGJWDKGJ")
-                   self.employeesAvailable = newEmployeesArray;
-                   self.servicesChosenTable.servicesChosen = serviceNames;
-                   if newEmployeesArray.count > 0 {
-                       print("GREAT!")
-                       DispatchQueue.main.async {
-                           self.timeDurationText.text = "From: " + self.timePicker.selectedItem! + "-" + closeTime!;
-                           var costStringArray = costString.components(separatedBy: ".");
-                           if costStringArray[1].count == 1 {
-                               costStringArray[1] = costStringArray[1] + "0";
-                               self.costText.text = "Cost: " + "$" + costStringArray[0] + "." +  costStringArray[1];
-                           }
-                           else {
-                               self.costText.text = "Cost: " + "$" + costString;
-                           }
-                           UIView.animate(withDuration: 0.4) {
-                               self.popUp.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - UIScreen.main.bounds.height / 1.15, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 1.15);
-                               self.backDrop.alpha = 1;
-                           }
-                       }
-                   }
-               }
-               else if res["statusCode"] as! Int == 406 {
-                   // do the alert here
-                   let alert = UIAlertController(title: "Time Unavailable", message: "Your business does not have any availability at this time. Want us to check for other nearby times on this date?", preferredStyle: .alert);
-                   let searchOthers = UIAlertAction(title: "Yes", style: .default) { (action: UIAlertAction) in
-                       print("gotta go find the others")
-                   }
-                   alert.addAction(searchOthers);
-                   let noThanks = UIAlertAction(title: "Nope", style: .cancel) { (action: UIAlertAction) in
-                       print("lol")
-                   }
-                   alert.addAction(noThanks)
-                   DispatchQueue.main.async {
-                       self.present(alert, animated: true, completion: nil);
-                   }
-               }
-           }
-       }
+            if res["statusCode"] as! Int == 409 {
+                let alert = UIAlertController(title: "Invalid Date", message: "The date or time you have chosen has already passed and cannot be scheduled.", preferredStyle: .alert);
+                let woops = UIAlertAction(title: "Woops, Got it!", style: .cancel, handler: nil);
+                alert.addAction(woops);
+                DispatchQueue.main.async {
+                    self.present(alert, animated: true, completion: nil);
+                }
+            }
+            if let employees = res["employees"] as? [[String: String]] {
+                var newEmployeesArray: [Employee] = [];
+                for employee in employees {
+                    let newEmployee = Employee(dic: employee)
+                    newEmployeesArray.append(newEmployee);
+                }
+                self.employeesAvailable = newEmployeesArray;
+                self.servicesChosenTable.servicesChosen = serviceNames;
+                if newEmployeesArray.count > 0 {
+                    DispatchQueue.main.async {
+                        self.timeDurationText.text = "From: " + self.timePicker.selectedItem! + "-" + closeTime!;
+                        var costStringArray = costString.components(separatedBy: ".");
+                        if costStringArray[1].count == 1 {
+                            costStringArray[1] = costStringArray[1] + "0";
+                            self.costText.text = "Cost: " + "$" + costStringArray[0] + "." +  costStringArray[1];
+                        }
+                        else {
+                            self.costText.text = "Cost: " + "$" + costString;
+                        }
+                        UIView.animate(withDuration: 0.4) {
+                            self.popUp.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 1.00);
+                        }
+                    }
+                }
+            }
+            else if res["statusCode"] as! Int == 406 {
+                // do the alert here
+                let alert = UIAlertController(title: "Time Unavailable", message: "Your business does not have any availability at this time. Want us to check for other nearby times on this date?", preferredStyle: .alert);
+                let searchOthers = UIAlertAction(title: "Yes", style: .default) { (action: UIAlertAction) in
+                    print("gotta go find the others")
+                }
+                alert.addAction(searchOthers);
+                let noThanks = UIAlertAction(title: "Nope", style: .cancel) { (action: UIAlertAction) in
+                    print("lol")
+                }
+                alert.addAction(noThanks)
+                DispatchQueue.main.async {
+                    self.present(alert, animated: true, completion: nil);
+                }
+            }
+        }
+    }
 }

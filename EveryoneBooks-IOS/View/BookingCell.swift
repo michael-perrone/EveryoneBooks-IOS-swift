@@ -16,9 +16,11 @@ class BookingCell: UITableViewCell {
         }
     }
     
- 
+    var booked: Bool?;
+    
     private let topBorder = Components().createBorder(height: 0.5, width: fullWidth - 20, color: .black);
     private let bottomBorder = Components().createBorder(height: 0.5, width: fullWidth - 20, color: .black);
+
 
     private let timeText: UITextView = {
         let uitv = Components().createSimpleText(text: "");
@@ -36,16 +38,15 @@ class BookingCell: UITableViewCell {
     }
     
     func configureCell() {
-        
-        addSubview(topBorder);
-        topBorder.padTop(from: topAnchor, num: 0);
-        topBorder.centerTo(element: centerXAnchor);
-        addSubview(timeText);
-        timeText.padTop(from: topAnchor, num: 4);
-        timeText.centerTo(element: centerXAnchor);
-        addSubview(bottomBorder);
-        bottomBorder.padBottom(from: bottomAnchor, num: 0);
-        bottomBorder.centerTo(element: centerXAnchor);
+        contentView.addSubview(topBorder);
+        topBorder.padTop(from: contentView.topAnchor, num: 0);
+        topBorder.centerTo(element: contentView.centerXAnchor);
+        contentView.addSubview(timeText);
+        timeText.padTop(from: contentView.topAnchor, num: 4);
+        timeText.centerTo(element: contentView.centerXAnchor);
+        contentView.addSubview(bottomBorder);
+        bottomBorder.padBottom(from: contentView.bottomAnchor, num: 0);
+        bottomBorder.centerTo(element: contentView.centerXAnchor);
         backgroundColor = .literGray;
     }
 }

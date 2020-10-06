@@ -222,6 +222,13 @@ class Components {
         return uib;
     }
     
+    func createPinkXButton() -> UIButton {
+           let uib = UIButton(type: .system);
+        uib.setAttributedTitle(NSAttributedString(string: "X", attributes: [NSAttributedString.Key.foregroundColor: UIColor.mainLav, NSAttributedString.Key.font: UIFont(name: "MarkerFelt-Wide", size: 38)]), for: .normal);
+           uib.tintColor = .black;
+           return uib;
+       }
+    
     func createAlternateButton(title: String) -> UIButton {
            let loginButton = UIButton(type: .system);
            loginButton.backgroundColor = .mainLav;
@@ -442,11 +449,9 @@ class Components {
     
     func createMenuButton() -> UIButton {
         let uib = UIButton(type: .system);
-        uib.setHeight(height: 40);
-        uib.setWidth(width: 40);
         uib.setBackgroundImage(UIImage(named: "menu"), for: .normal);
+        uib.setHeight(height: 45);
+        uib.setWidth(width: 56);
         return uib;
     }
-    
-    
 }

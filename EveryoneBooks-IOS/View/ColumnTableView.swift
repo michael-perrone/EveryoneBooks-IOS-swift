@@ -20,9 +20,15 @@ class ColumnTableView: UITableView, UITableViewDataSource, UITableViewDelegate, 
         }
     }
     
-    private var bookings: [Booking]? {
+    private var bookings: [Booking] = [] {
         didSet {
-            for booking in self.bookings! {
+            print(bookings);
+            print(String(bookings.count) + " is the count")
+            print("THESE ARE IMPORTANT ABOVE")
+            if let bcn = bcn {
+                print(bcn)
+            }
+            for booking in self.bookings {
                 let times = booking.time?.components(separatedBy: "-");
                 startTimes.append(times![0]);
                 endTimes.append(times![1]);
@@ -33,10 +39,19 @@ class ColumnTableView: UITableView, UITableViewDataSource, UITableViewDelegate, 
                     otherTimes.append(Utilities.itst[startNum]!)
                 }
             }
+            DispatchQueue.main.async {
+                self.reloadData()
+            }
         }
     }
     
-    private var date: String?
+    private var date: String? {
+        didSet {
+            startTimes = [];
+            endTimes = [];
+            otherTimes = [];
+        }
+    }
     
     func setDate(date: String) {
         self.date = date;
@@ -44,27 +59,33 @@ class ColumnTableView: UITableView, UITableViewDataSource, UITableViewDelegate, 
     
     var startTimes: [String] = [] {
         didSet {
-          print(self.startTimes)
+            DispatchQueue.main.async {
+                self.reloadData();
+            }
         }
     }
     
     var endTimes: [String] = [] {
         didSet {
-            print(self.endTimes)
+            DispatchQueue.main.async {
+                self.reloadData();
+            }
         }
     }
     
-    var otherTimes: [String] = [];
+    var otherTimes: [String] = [] {
+        didSet {
+            DispatchQueue.main.async {
+                self.reloadData();
+            }
+        }
+    }
     
     func setBookings(bookings: [Booking]) {
         self.bookings = bookings
     }
     
-    private var timeSlotNum: Int? {
-        didSet {
-            reloadData()
-        }
-    }
+    private var timeSlotNum: Int?
     
     private var times: [String]?;
     
@@ -74,7 +95,7 @@ class ColumnTableView: UITableView, UITableViewDataSource, UITableViewDelegate, 
         self.bcn = bcn;
     }
     
-    private var openTime: String?
+    private var openTime: String?;
     
     private var closeTime: String? {
         didSet {
@@ -131,37 +152,44 @@ class ColumnTableView: UITableView, UITableViewDataSource, UITableViewDelegate, 
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let times = times {
-            if let bookings = bookings {
-                if bookings.count > 0 {
                     if startTimes.contains(times[indexPath.row]) {
+                        print(startTimes)
                         let topBookedCell = dequeueReusableCell(withIdentifier: "4", for:  indexPath) as! TopBookedCell;
+                        topBookedCell.booked = false;
                         topBookedCell.setTime(time: times[indexPath.row]);
-                        topBookedCell.configureCell();
                         topBookedCell.selectionStyle = .none;
                         topBookedCell.delegate = self;
+                        topBookedCell.booked = true;
+                        topBookedCell.configureCell();
                         return topBookedCell;
                     }
-                    if indexPath.row + 2 <= times.count {
+                    else if indexPath.row + 2 <= times.count {
                         if endTimes.contains(times[indexPath.row + 1]) {
+                            print(endTimes)
                             let bottomBookedCell = dequeueReusableCell(withIdentifier: "5", for:  indexPath) as! BottomBookedCell;
+                            bottomBookedCell.booked = false;
                             bottomBookedCell.setTime(time: Utilities.itst[Utilities.stit[times[indexPath.row + 1]]!]!);
-                            bottomBookedCell.configureCell();
                             bottomBookedCell.selectionStyle = .none;
                             bottomBookedCell.delegate = self;
+                            bottomBookedCell.booked = true;
+                            bottomBookedCell.configureCell();
                             return bottomBookedCell;
                         }
-                    }
-                    if otherTimes.contains(times[indexPath.row]) {
-                        let bookedCell = dequeueReusableCell(withIdentifier: "3", for:  indexPath) as! BookedCell;
-                        bookedCell.configureThisCell();
-                        bookedCell.setTime(time: times[indexPath.row]);
-                        bookedCell.selectionStyle = .none;
-                        bookedCell.delegate = self;
-                        return bookedCell;
-                    }
-                }
-            }
+                   else if otherTimes.contains(times[indexPath.row]) {
+                            print(otherTimes)
+                            let bookedCell = dequeueReusableCell(withIdentifier: "3", for:  indexPath) as! BookedCell;
+                        bookedCell.booked = false;
+                            bookedCell.setTime(time: times[indexPath.row]);
+                            bookedCell.selectionStyle = .none;
+                            bookedCell.delegate = self;
+                            bookedCell.booked = true;
+                            return bookedCell;
+                        }
+                        
+                        
+                  }
             let bookingCell = dequeueReusableCell(withIdentifier: "2", for: indexPath) as! BookingCell;
+            bookingCell.booked = false;
             bookingCell.setTime(time: times[indexPath.row]);
             bookingCell.configureCell();
             bookingCell.selectionStyle = .none;
@@ -169,6 +197,7 @@ class ColumnTableView: UITableView, UITableViewDataSource, UITableViewDelegate, 
         }
         let bookingCell = dequeueReusableCell(withIdentifier: "2", for: indexPath) as! BookingCell;
         bookingCell.configureCell();
+        bookingCell.booked = false;
         bookingCell.selectionStyle = .none;
         return bookingCell;
     }

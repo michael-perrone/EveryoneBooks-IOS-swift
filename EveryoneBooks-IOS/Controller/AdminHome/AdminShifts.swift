@@ -208,8 +208,6 @@ class AdminShifts: UIViewController {
            return uib;
     }()
     
-    
-    
     private let breakTimeText: UITextView = {
         let uitv = Components().createSimpleText(text: "Break Start/End");
         uitv.font = .boldSystemFont(ofSize: 16);

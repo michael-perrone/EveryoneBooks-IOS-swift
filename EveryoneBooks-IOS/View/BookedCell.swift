@@ -9,7 +9,15 @@ import UIKit
 
 class BookedCell: UITableViewCell {
     
-    
+    var booked: Bool? {
+        didSet {
+            if booked! {
+                let tap = UITapGestureRecognizer(target: self, action: #selector(hit));
+                addGestureRecognizer(tap);
+                backgroundColor = UIColor.init(red: 300, green: 0, blue: 0, alpha: 0.3);
+            }
+        }
+    }
     
     private var time: String?;
     
@@ -28,9 +36,4 @@ class BookedCell: UITableViewCell {
         delegate?.getBookingInfo(time: self.time!)
     }
     
-    func configureThisCell() {
-        let tap = UITapGestureRecognizer(target: self, action: #selector(hit));
-        addGestureRecognizer(tap);
-        backgroundColor = UIColor.init(red: 300, green: 0, blue: 0, alpha: 0.3);
-    }
 }

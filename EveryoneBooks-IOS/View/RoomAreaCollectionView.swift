@@ -69,8 +69,8 @@ class RoomAreaCollectionView: UICollectionView, UICollectionViewDelegate, UIColl
             cell.setRoomText(text: bct + " " + String(indexPath.row + 1));
         }
         if let bookings = bookings {
-            cell.setColumnBookings(bookings: bookings[indexPath.row])
-            print(bookings)
+            print(indexPath.row)
+            cell.setColumnBookings(bookings: bookings[cell.getBcn() - 1])
         }
         return cell;
     }

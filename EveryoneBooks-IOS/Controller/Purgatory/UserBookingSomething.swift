@@ -26,7 +26,6 @@ class UserBookingSomething: UIViewController, EmployeesTable {
         DispatchQueue.main.async {
             self.present(bookSuccess, animated: true, completion: nil);
         }
-        
     }
     
     var employeesAvailable: [Employee]? {

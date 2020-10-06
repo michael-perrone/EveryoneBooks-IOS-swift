@@ -8,23 +8,9 @@
 
 import UIKit
 
-class UserHomeViewController: UITabBarController {
+class UserHomeViewController: TabBarSliderController {
     
-    private let menuButton: UIButton = {
-        let uib = Components().createMenuButton()
-        uib.addTarget(self, action: #selector(logout), for: .touchUpInside)
-        return uib;
-    }()
-    
-    @objc func logout() {
-        Utilities().logout(key: "token");
-        let loginController = UINavigationController(rootViewController: LoginController());
-        loginController.modalTransitionStyle = .crossDissolve;
-        loginController.modalPresentationStyle = .fullScreen;
-        present(loginController, animated: true, completion: nil);
-        
-    }
-
+   
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
@@ -35,9 +21,6 @@ class UserHomeViewController: UITabBarController {
 
     func configureUI() {
         view.backgroundColor = .literGray;
-        view.addSubview(menuButton);
-        menuButton.padRight(from: view.rightAnchor, num: 20)
-        menuButton.padTop(from: view.safeAreaLayoutGuide.topAnchor, num: 5);
      }
      
      func configureTabs() {

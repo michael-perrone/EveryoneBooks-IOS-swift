@@ -18,27 +18,48 @@ class EmployeesAvailableTable: UITableView, UITableViewDataSource, UITableViewDe
     
     var otherDelegate: EmployeesTable?;
     
+    var otherOtherDelegate: BookingHit?
+    
     var timeChosen: String?;
     
     var businessId: String?;
        
     var dateChosen: String?;
        
-    var services: [Service]?
-
+    var services: [Service]?;
+    
+    var fromBusiness: Bool?;
+    
+    var phone: String? {
+        didSet {
+            print(phone)
+        }
+    }
+    
     func bookEmployee(employeeId: String) {
         var serviceIdsArray: [String] = [];
-        
         for service in services! {
             serviceIdsArray.append(service.id);
         }
         if let timeStart = self.timeChosen, let date = self.dateChosen, let businessId = businessId {
             let data = ["timeStart": timeStart, "date": date, "serviceIds": serviceIdsArray, "employeeId": employeeId, "businessId": businessId] as [String : Any];
-            API().post(url: myURL + "iosBooking/user", headerToSend: Utilities().getToken(), dataToSend: data) { (res) in
-                if res["statusCode"] as! Int == 200{
-                    self.otherDelegate?.bookHit()
-                } else {
-                    print("something musta went wrong")
+            if let fromBusiness = fromBusiness, let phone = phone {
+                API().post(url: myURL + "iosBooking/admin", dataToSend: ["phone": phone ,"timeStart": timeStart, "date": date, "serviceIds": serviceIdsArray, "employeeId": employeeId, "businessId": Utilities().decodeAdminToken()!["businessId"]]) { (res) in
+                     if res["statusCode"] as! Int == 200{
+                        self.otherOtherDelegate?.bookHit();
+                    }
+                     else {
+                        print(res["statusCode"])
+                    }
+                }
+            }
+            else {
+                API().post(url: myURL + "iosBooking/user", headerToSend: Utilities().getToken(), dataToSend: data) { (res) in
+                    if res["statusCode"] as! Int == 200{
+                        self.otherDelegate?.bookHit()
+                    } else {
+                        print("something musta went wrong")
+                    }
                 }
             }
         }
@@ -46,8 +67,6 @@ class EmployeesAvailableTable: UITableView, UITableViewDataSource, UITableViewDe
     
        var employees: [Employee]? {
            didSet {
-            print("employees updated");
-            print(self.employees)
                DispatchQueue.main.async {
                    self.reloadData();
                }
@@ -69,8 +88,6 @@ class EmployeesAvailableTable: UITableView, UITableViewDataSource, UITableViewDe
        
        func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
            if let employees = employees {
-            print("before count");
-            print(employees.count)
                 return employees.count;
            }
            else {
@@ -81,8 +98,6 @@ class EmployeesAvailableTable: UITableView, UITableViewDataSource, UITableViewDe
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "employeeCell", for: indexPath) as! EmployeeAvailableCell;
         if let employees = employees {
-            print(employees)
-            print("EMPLOYEES JUST PRINTED TABLE")
             cell.employee = employees[indexPath.row];
             cell.configureCell();
             cell.delegate = self;

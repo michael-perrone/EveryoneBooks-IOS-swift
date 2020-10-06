@@ -17,7 +17,7 @@ import UIKit
 
 class CustomNumberPicker: UIPickerView, UIPickerViewDelegate, UIPickerViewDataSource  {
   
-   var selected = "";
+   var selected = "1";
     
     var bcn: Int? {
         didSet {
