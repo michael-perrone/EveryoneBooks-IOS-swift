@@ -13,7 +13,6 @@
 		8937C66724BBEF34001BB785 /* ShiftsTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8937C66624BBEF34001BB785 /* ShiftsTableView.swift */; };
 		8937C66924BBFEAA001BB785 /* ShiftsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8937C66824BBFEAA001BB785 /* ShiftsTableViewCell.swift */; };
 		893E71B1248BE168001C66E9 /* Business.swift in Sources */ = {isa = PBXBuildFile; fileRef = 893E71B0248BE168001C66E9 /* Business.swift */; };
-		893E71B7248BE7CC001C66E9 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 893E71B6248BE7CC001C66E9 /* API.swift */; };
 		893E71B9248D72C5001C66E9 /* Booking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 893E71B8248D72C5001C66E9 /* Booking.swift */; };
 		893E71BB248D76C6001C66E9 /* Employee.swift in Sources */ = {isa = PBXBuildFile; fileRef = 893E71BA248D76C6001C66E9 /* Employee.swift */; };
 		893F401B25139F3300EDFAE2 /* RoomAreaCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 893F401A25139F3300EDFAE2 /* RoomAreaCollectionView.swift */; };
@@ -100,6 +99,7 @@
 		89D11B9A248DCFAD0018D1BC /* BioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89D11B99248DCFAD0018D1BC /* BioController.swift */; };
 		89D11B9C248E80550018D1BC /* EditBusinessHelp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89D11B9B248E80550018D1BC /* EditBusinessHelp.swift */; };
 		89D8D1F5247A04EC00060B53 /* RegisterAdminController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89D8D1F4247A04EC00060B53 /* RegisterAdminController.swift */; };
+		89DC57E825354C81005326A1 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89DC57E725354C81005326A1 /* API.swift */; };
 		89E7B51B250C46F5003A2426 /* ServicesTextTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89E7B51A250C46F5003A2426 /* ServicesTextTable.swift */; };
 		89E7B51F250D5BCD003A2426 /* SelectedServicesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89E7B51E250D5BCD003A2426 /* SelectedServicesCell.swift */; };
 		89E7B521250D5BDE003A2426 /* UnselectedServicesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89E7B520250D5BDE003A2426 /* UnselectedServicesCell.swift */; };
@@ -120,7 +120,6 @@
 		8937C66624BBEF34001BB785 /* ShiftsTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShiftsTableView.swift; sourceTree = "<group>"; };
 		8937C66824BBFEAA001BB785 /* ShiftsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShiftsTableViewCell.swift; sourceTree = "<group>"; };
 		893E71B0248BE168001C66E9 /* Business.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Business.swift; sourceTree = "<group>"; };
-		893E71B6248BE7CC001C66E9 /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 		893E71B8248D72C5001C66E9 /* Booking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Booking.swift; sourceTree = "<group>"; };
 		893E71BA248D76C6001C66E9 /* Employee.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Employee.swift; sourceTree = "<group>"; };
 		893F401A25139F3300EDFAE2 /* RoomAreaCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomAreaCollectionView.swift; sourceTree = "<group>"; };
@@ -209,6 +208,7 @@
 		89D11B99248DCFAD0018D1BC /* BioController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BioController.swift; sourceTree = "<group>"; };
 		89D11B9B248E80550018D1BC /* EditBusinessHelp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditBusinessHelp.swift; sourceTree = "<group>"; };
 		89D8D1F4247A04EC00060B53 /* RegisterAdminController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterAdminController.swift; sourceTree = "<group>"; };
+		89DC57E725354C81005326A1 /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 		89E7B51A250C46F5003A2426 /* ServicesTextTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServicesTextTable.swift; sourceTree = "<group>"; };
 		89E7B51E250D5BCD003A2426 /* SelectedServicesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedServicesCell.swift; sourceTree = "<group>"; };
 		89E7B520250D5BDE003A2426 /* UnselectedServicesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnselectedServicesCell.swift; sourceTree = "<group>"; };
@@ -366,7 +366,7 @@
 			children = (
 				8944A84824859F7F00D0007F /* BasicCalls.swift */,
 				8944DCEA244F5559004A2819 /* LoginController.swift */,
-				893E71B6248BE7CC001C66E9 /* API.swift */,
+				89DC57E725354C81005326A1 /* API.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -601,7 +601,6 @@
 				894ED9E624A7D87C00A24858 /* BusinessPageController.swift in Sources */,
 				894B947E2457D2FF008E582E /* Constants.swift in Sources */,
 				894634F924A0282E0043A6EA /* BusinesSearchCell.swift in Sources */,
-				893E71B7248BE7CC001C66E9 /* API.swift in Sources */,
 				894634F5249FC2F50043A6EA /* AdminProfileHelpCell.swift in Sources */,
 				894600D9248327080001A453 /* BookingItemPicker.swift in Sources */,
 				8947AD8E24C5459B00C525BD /* EmployeesAvailableTable.swift in Sources */,
@@ -628,6 +627,7 @@
 				898AA1C12529934D00FE0A75 /* ResetPassword.swift in Sources */,
 				8937C66924BBFEAA001BB785 /* ShiftsTableViewCell.swift in Sources */,
 				898AA1C32529969E00FE0A75 /* ChangePassword.swift in Sources */,
+				89DC57E825354C81005326A1 /* API.swift in Sources */,
 				893F40212515187F00EDFAE2 /* BookingCell.swift in Sources */,
 				898AA1B72527DF6A00FE0A75 /* SliderMenuTable.swift in Sources */,
 				8944DCEB244F5559004A2819 /* LoginController.swift in Sources */,

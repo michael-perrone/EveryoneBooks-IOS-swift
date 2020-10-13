@@ -81,7 +81,6 @@ class TabBarSliderController: UITabBarController, SliderMenuDelegate {
          if Utilities().getEmployeeToken() != "nil" {
             let resetPasswordVc = ResetPassword();
             let changePasswordVc = ChangePassword();
-            selectableItems = [SelectionItem(vc: <#T##UIViewController?#>, title: <#T##String#>, image: <#T##UIImage#>), SelectionItem(vc: changePasswordVc, title: "Reset Password", image: #imageLiteral(resourceName: "resetpassword")) ,SelectionItem(vc: nil, title: "Logout", image: #imageLiteral(resourceName: "wavereal"))];
         }
         else if Utilities().getToken() != "nil" {
             Utilities().logout(key: "token")
